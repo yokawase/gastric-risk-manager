@@ -29,14 +29,13 @@
 - **言語**: TypeScript
 - **スタイリング**: Vanilla CSS (または要件に応じてTailwindCSS)
     - ※今回は最速でのプロトタイピングとモダンなUI（Vibrant colors, Glassmorphism等）の実装のため、**Tailwind CSS** および **shadcn/ui** （またはそれに類するUIコンポーネント群）、アニメーション用に **Framer Motion** などの利用を提案する。
-- **アイコン等**: Lucide React など
+- **アイコン等**: Lucide React
 
 ## 4. 現在のステップ
 
-1. [x] 要件ヒアリング（目的・ターゲット・利用シーンの確定）
-2. [x] 本ドキュメント（ANTIGRAVITY.md）の作成と方針決定
-3. [ ] 技術スタックの最終確認と、Next.jsプロジェクトの初期化（`npm install`）
-4. [ ] MVPフェーズ1の実装開始（UIモックアップの作成）
+- [x] Step 3: データ永続化・セキュリティ
+- [/] Step 4: 運用・改善（機能追加・UI磨き込み）
+- [ ] Step 5: 全世界展開・本格運用
 
 ---
 
