@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>論文ダウンロード（JSGCS投稿用）</title>
+    <style>
+        body { font-family: sans-serif; padding: 2rem; background-color: #f5f5f5; }
+        .container { background-color: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; text-align: center; }
+        .btn { background-color: #0056b3; color: white; border: none; padding: 15px 30px; font-size: 16px; border-radius: 5px; cursor: pointer; display: inline-block; margin-top: 20px; font-weight: bold;}
+        .btn:hover { background-color: #004494; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📝 JSGCS 投稿用Wordファイル生成</h2>
+        <p>「立法目的」「査読対応」の文脈を削除し、論理的飛躍のないよう修正を行いました。<br>JSGCSの規定（A4縦、12pt、行間1.5、句読点「。」「、」）を適用済みです。</p>
+        <button class="btn" onclick="downloadDoc()">Word形式（.doc）でダウンロード</button>
+    </div>
+
+    <div id="word-content" style="display: none;">
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                @page { size: 210mm 297mm; margin: 25mm 25mm 25mm 25mm; }
+                body { font-family: "MS Mincho", "ＭＳ 明朝", serif; font-size: 12pt; line-height: 1.5; }
+                p { margin-top: 0; margin-bottom: 0; text-align: justify; }
+                .indent { text-indent: 1em; }
+                .title-page { text-align: center; }
+                .title { font-size: 16pt; font-weight: bold; margin-bottom: 20mm; line-height: 1.5; }
+                .author { font-size: 14pt; margin-bottom: 5mm; }
+                .affiliation { font-size: 12pt; margin-bottom: 30mm; }
+                .contact-info { text-align: left; margin-left: 20%; line-height: 1.5; }
+                .page-break { page-break-before: always; }
+                .heading1 { font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; }
+                .heading2 { font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
+                .heading3 { font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em; margin-left: 1em; }
+                .reference-list { margin-left: 2em; text-indent: -2em; margin-bottom: 0.5em; }
+            </style>
+        </head>
+        <body>
+            <div class="title-page">
+                <br><br><br><br>
+                <div class="title">検診体制の制度的転換（2026年4月〜）と胃がん検診：<br>画一的one-size-fits-allの限界</div>
+                <div class="author">〇〇 〇〇<sup>1)</sup></div>
+                <div class="affiliation">1) 〇〇病院 消化器内科</div>
+                <br><br>
+                <div class="contact-info">
+                    【連絡先】<br>
+                    〒XXX-XXXX 〇〇県〇〇市〇〇町〇-〇-〇<br>
+                    〇〇病院<br>
+                    〇〇 〇〇<br>
+                    TEL: 0X-XXXX-XXXX<br>
+                    Email: xxxx@example.com
+                </div>
+            </div>
+
+            <div class="page-break"></div>
+
+            <p class="indent">2026年4月から、職域検診と対策型検診を統合した「組織型検診」が社会実装される。データ連携・受診勧奨・精密検査フォローを制度として整える意義は大きいが、胃がん領域において年齢だけで線引きする画一的（one-size-fits-all）設計を導入すると、（i）若年のピロリ菌感染者、（ii）ピロリ除菌後で高度萎縮性胃炎（あるいは腸上皮化生）を残す高リスク者における胃がんの未検出・発見遅延を生じうる危険がある。本稿は、このリスクを「制度的転換期における中心的論点」として位置づけ、感染歴と粘膜リスクに基づく層別化へ、組織型検診を接続する必要性を論じる<sup>22,24)</sup>。</p>
+
+            <div class="heading1">（1）問題設定：画一的検診が未検出・発見遅延を生むメカニズム</div>
+            <div class="heading2">1. 背景：リスク構造が変化し、「一律検診」の費用対効果が揺らいでいる</div>
+            <p class="indent">我が国では、Helicobacter pylori（ピロリ菌）感染率が世代（出生コホート）とともに低下し、萎縮性胃炎等の前がん病変の保有者が相対的に減少している。この結果、胃がん罹患リスクの平均値は低下しつつあり、従来の年齢のみを基準とした一律の検診（one-size-fits-all）は、発見効率の低下、偽陽性・偶発症等の不利益の相対的増大、及び医療資源配分上の非効率を招きやすい。</p>
+            <p class="indent">加えて、「ピロリ菌陰性」集団は一様ではなく、（i）生涯未感染者と、（ii）感染歴があり除菌後に菌が消失した者（除菌後者）に大別され、後者の残存リスクは除菌時点の萎縮や腸上皮化生の程度に強く依存する。このため、現感染・既感染（除菌後）・未感染という状態を識別した上での層別化が、今後の検診の論理的前提となる。また、シミュレーション研究は、H. pyloriの検査・除菌やリスク層別化戦略が、年齢のみの画一的な内視鏡検診より費用対効果に優れ得ることを一貫して示しており、制度として「層別化を運用可能にする情報基盤（把握・追跡・評価）」の整備が必要となる<sup>22)</sup>。</p>
+
+            <div class="heading2">2. 現状の課題：対策型と職域が分断され、受診管理・精度管理が成立しにくい</div>
+            <p class="indent">胃がん検診は、自治体の対策型検診に加え、職域（保険者・事業主）でも多様な形で提供されている。しかし、職域検診は対象者数・受診者数・判定・要精検・精密検査受診の把握が統一的に行われないことが多く、受診率算定、要精検者のフォロー、偶発症の把握、検査方法の標準化等が困難となる<sup>11,12,14)</sup>。</p>
+            <p class="indent">さらに、2026年4月から職域検診と対策型検診を統合した「組織型検診」へ移行することにより、未受診者の把握や精密検査への導線整備は進む一方、胃がん領域では「年齢のみ」を基準とする画一設計が、これまで職域で担ってきた若年層の介入機会を縮小しうる。感染率が低下しているとはいえ50歳未満にも一定割合のピロリ感染者が存在し、介入開始年齢の引上げは高リスク者の見逃し・発見遅れのリスクを増やし得るため、組織型検診の社会実装は「統合（データ連携）」と同時に「層別化（感染診断・粘膜リスク評価）」へ接続させる設計が不可欠である<sup>22,24)</sup>。</p>
+            <p class="indent">加えて、対策型検診は「対象集団全体の死亡率を下げる」公共的サービスであり、限られた資源の下で便益と不利益のバランスを取りつつ、集団としての便益を最大化することが前提となる。したがって、職域を含む実施実態の把握、精度管理、事業評価が不十分なまま多様な検査が併存すると、科学的根拠に基づく検診の実装（対象・方法・間隔）と、受診率指標の解釈（市町村実施分と職域分の混在）がともに不安定化する<sup>13)</sup>。</p>
+
+            <div class="heading2">3. 組織型検診への統合による「把握→勧奨→評価→改善」の実装</div>
+            <p class="indent">対策型検診と職域検診を「組織型検診」へと統合する制度的転換は、（i）対象者の把握と受診勧奨、（ii）要精検者の精密検査受診勧奨、（iii）精度管理（品質指標・偶発症監視）、（iv）事業評価（有効性・不利益・費用対効果）のマネジメントサイクルを実装することを目的とする。これにより、胃がん領域では、ピロリ感染や萎縮の程度等のリスク情報に応じた層別化（高リスクには重点的に、低リスクには過剰介入を避ける）を、現実の運用として可能にする基盤が整う。</p>
+
+            <div class="heading2">4. 期待される効果：死亡減少と不利益最小化、資源配分の最適化</div>
+            <p>1. 死亡減少の最大化：高リスク集団の取りこぼしを防ぎ、適時の精密検査・治療につなげる。<br>
+            2. 不利益の最小化：低リスク集団への過剰な内視鏡実施や不要な精密検査を減らし、偶発症・心理的負担を抑制する。<br>
+            3. 資源配分の最適化：内視鏡キャパシティ等の制約下で、検診頻度・対象年齢・検査法の最適化を可能にする。<br>
+            4. 公平性の向上：自治体・職域間の格差を縮小し、全国的に比較可能な指標で改善を進める。</p>
+
+            <div class="heading2">5. 実施上の要点：医療DXと標準化を前提に段階導入</div>
+            <p class="indent">組織型検診の成立には、標準データ項目・コード体系、仮名化による名寄せ、監査可能なアクセス制御等が不可欠である。そこで、まず報告義務の標準化を導入し、次に精密検査結果連携を拡張し、最後に全国的な精度管理・事業評価を定常運用とする段階的施行を採る<sup>10)</sup>。</p>
+
+            <div class="heading2">6. 検診介入の倫理的限界：国家介入の「8階段」とQALY/ICER</div>
+            <p class="indent">組織型検診の前提として、検診は「推奨」から「半ば強制」に近い運用まで幅があり、個人の自由（自律）への介入の強度を明確にして正当化する枠組みが必要である。Nuffield Council on Bioethicsは、公衆衛生政策の介入を侵襲性で並べた「intervention ladder（介入の梯子）」を提示した<sup>15)</sup>。</p>
+
+            <div class="heading3">（1）個人の自由を制限する国家介入の8階段（intervention ladder）</div>
+            <p class="indent">検診政策に対応づけると、概ね次の8段階（低侵襲→高侵襲）として整理できる<sup>15)</sup>。</p>
+            <p>1. 何もしない（自然経過に任せる）<br>
+            2. 情報提供（リスク・利益/不利益の提示）<br>
+            3. 選択を可能にする（受診機会の整備、費用補助、アクセス改善）<br>
+            4. デフォルトで誘導する（予約済み招待、リマインド、opt-outを基本とする設計）<br>
+            5. インセンティブで誘導する（受診で小さな便益付与）<br>
+            6. ディスインセンティブで抑制する（未受診に不利益を課す）<br>
+            7. 選択肢を制限する（特定場面で事実上の義務化、条件付き受診）<br>
+            8. 選択肢を排除する（強制）<br>
+            この枠組みは直観的だが、介入が常に自律を損なうとは限らず（例：情報やアクセス改善が自律を高める場合）、梯子の単純な「上ほど悪い」という読替えには注意が必要である<sup>16,17)</sup>。</p>
+
+            <div class="heading3">（2）資本主義の医療政策をQALY/ICERで語る：効率性の論理とその限界</div>
+            <p class="indent">限られた財源の下で、医療技術・制度を比較する際に、QALY（質調整生存年）とICER（増分費用効果比）は「効率性」を議論する共通言語になる<sup>18)</sup>。一方で、（i）分配の公正（誰のQALYを優先するか）、（ii）障害・高齢等に不利になり得る測定上の偏り、（iii）不確実性や希少有害事象、（iv）手続的正当性（説明責任・透明性）など、QALY最大化だけでは政策判断にならない領域がある<sup>19)</sup>。</p>
+
+            <div class="heading3">（3）検診介入の倫理的限界：最大多数の最大幸福は十分条件か？</div>
+            <p class="indent">検診は集団利益（死亡減少）を狙う一方、偽陽性・過剰診断・偶発症などの不利益を一部の個人に集中させ得るため、「最大多数の最大幸福（功利主義）」だけで正当化すると、少数者の不利益の正当化に傾く危険がある。したがって組織型検診の制度設計では、</p>
+            <p>・個人の尊重：利益・不利益と不確実性を含む情報提供による「個人のinformed choice」<sup>20,21)</sup><br>
+            ・比例性：介入の侵襲性（上の8階段）に応じて、必要な根拠と説明責任を強化<sup>15)</sup><br>
+            ・公平性：格差を拡大しない招待設計・フォローアップ・費用負担<br>
+            ・資源配分：費用対効果（QALY/ICER）を参考にしつつ、価値判断の根拠を明示<sup>18)</sup><br>
+            を同時に満たすことが「倫理的限界」を定める実務的な基準となる。</p>
+
+            <div class="heading1">（2）ピロリ菌陰性時代における胃がん検診の適正化：シミュレーション・技術・政策の統合的考察</div>
+            <div class="heading2">1. 疫学的転換：「ピロリ菌陰性」は単一集団ではない</div>
+            <p class="indent">ピロリ菌感染率の低下により、将来の胃がんリスクは一様ではなくなる。重要なのは「ピロリ菌陰性」を、（i）未感染者（生涯に一度も感染しない）と、（ii）除菌後者（既感染で除菌済み）に分けて捉えることである。後者はリスクが低下してもゼロにはならず、除菌時点の萎縮・腸上皮化生の程度に依存して残存リスクが規定される。</p>
+
+            <div class="heading2">2. シミュレーションの含意：年齢基準の画一検診から「感染歴・粘膜ステージ」基準へ</div>
+            <p class="indent">ピロリ菌陰性時代の政策設計では、死亡・QALY・医療費といった長期転帰を扱えるマルコフモデル/マイクロシミュレーションが重要となる。複数のシミュレーション研究は、年齢のみで一律に内視鏡資源を配分する戦略よりも、ピロリ感染状態（現感染・既感染・未感染）を前提にした層別化が費用対効果の観点から優位になり得ることを示唆する。</p>
+
+            <div class="heading2">3. 中心的論点：一次予防（Test-and-Treat）と二次予防（サーベイランス）の統合</div>
+            <p class="indent">「集団ベースの検査・除菌（Test-and-Treat）」と「リスク層別化サーベイランス（Risk-Stratified Surveillance）」は二者択一ではなく、段階的に統合して設計すべきである。</p>
+            <p>・一次予防：若年〜中年層でピロリ検査と除菌を進め、将来の罹患を抑える。<br>
+            ・二次予防：除菌後も残るリスクに対して、萎縮・腸上皮化生の程度に応じた内視鏡サーベイランス間隔を設定する。<br>
+            血清学的リスク層別（いわゆるABC分類）は、除菌後者が低リスク群に混入し得る等の限界が指摘されており、除菌後の管理を前提とする制度では、除菌前（または初回）内視鏡での粘膜評価を核とした層別化が要点となる。</p>
+
+            <div class="heading2">4. 3戦略比較シミュレーションによる定量評価と不確実性分析</div>
+            <p class="indent">本稿の問題意識（画一的one-size-fits-allの取りこぼしと過剰介入）を定量化し、モデルの不確実性を評価するため、1万人仮想コホートを用いたマルコフ/モンテカルロ（個人ベース）シミュレーションおよび確率的感度分析（PSA）を実施した。</p>
+
+            <div class="heading3">（1）比較した3戦略</div>
+            <p>1. 戦略H（現行ハイブリッド）：対策型（例：40歳以上の隔年内視鏡）と職域（例：35〜40歳から毎年内視鏡）が混在する現状モデル。<br>
+            2. 戦略S（組織型：画一的）：組織型検診へ統合後、年齢のみで一律に対象・間隔を定める（例：50歳以上・隔年内視鏡）モデル。<br>
+            3. 戦略P（リスク層別化）：若年からのピロリ感染診断（Test-and-Treat）を基盤に、既感染で高度萎縮等の高リスク群には短い間隔、低リスク群には間隔延長を行う最適化モデル。</p>
+
+            <div class="heading3">（2）主要アウトカム：死亡数と相対リスク（RR）の定量的評価</div>
+            <p class="indent">シミュレーションの結果、各戦略間で胃がん死亡数に顕著な差が認められた。現行の戦略Hを基準とした場合、年齢基準による画一的な戦略Sは死亡リスクを改善せず、むしろ悪化させる危険性が示された。対照的に、戦略Pは男女ともに劇的な死亡減少効果を示した。</p>
+            <p>・男性コホートにおける結果：戦略Hの胃がん死亡数が平均95.0人であったのに対し、戦略Sでは平均123.0人へと増加し、相対リスク（RR）は1.294（95%信用区間：1.263 - 1.325）と有意な悪化を示した。一方、戦略Pでは平均65.5人へと突出し、RRは0.688（95%信用区間：0.633 - 0.742）と約31%の死亡リスク低減を達成した。<br>
+            ・女性コホートにおける結果：戦略Hの死亡数平均62.5人に対し、戦略Sは62.5人でRR 1.000（95%信用区間：0.985 - 1.016）と改善効果は見られなかった。対照的に、戦略Pは平均31.5人へと半減し、RR 0.507（95%信用区間：0.396 - 0.617）と極めて高い有効性を示した。</p>
+            <p class="indent">画一的な年齢引き上げ（戦略S）は、若年感染者や除菌後高リスク者のフォローを弱める「取りこぼし」を生み、死亡増につながるメカニズムを定量的に裏付けるものである。</p>
+
+            <div class="heading3">（3）費用対効果と不確実性の評価（PSAに基づく閾値分析）</div>
+            <p class="indent">モデルの不確実性を評価するため、行動変容（受診率等、Beta分布）、コスト（内視鏡・がん治療費等、Gamma分布）、QALY効用値（Beta分布）のパラメータを変動させる確率的感度分析（PSA）を実施し、増分費用効果比（ICER）を算出した。</p>
+            <p>・戦略Sの経済的非効率性：女性コホートにおいて戦略Sは、戦略Hに対するICERが726,006 JPY/QALY（95%信用区間：354,405 - 1,097,607）となり、男性コホートにおいては全シミュレーション回において「Dominated（高コスト・低QALY）」と判定された。これは、低リスク者への過剰介入による資源の浪費を示している。<br>
+            ・戦略Pの圧倒的優位性（Dominant）：戦略Pは、女性コホートにおいてICERが-437,890 JPY/QALYと負の値（コスト削減かつQALY向上）を示した。男性コホートにおいても全回で「Dominant（低コスト・高QALY）」と判定され、支払意思額（WTP）の一般的な閾値（例：5,000,000 JPY/QALY）を考慮するまでもなく、医療経済学的に極めて優れた戦略であることが頑健に示された。</p>
+
+            <div class="heading2">5. 新技術：AI支援内視鏡による「ワンストップ」化と品質管理</div>
+            <p class="indent">AIは、（i）病変検出、（ii）感染状態（未感染/現感染/除菌後）の推定、（iii）観察漏れの低減（品質管理）を同時に支援し得る。これにより、初回内視鏡で「見つける」だけでなく、将来リスクの層別化とサーベイランス計画の提示までを一体化する設計が現実味を帯びる。</p>
+
+            <div class="heading2">6. 倫理的課題と実装への提言：健康格差（Inverse Care Law）の抑止</div>
+            <p class="indent">若年層におけるピロリ未感染者の増加を背景に、低リスク者への過剰な内視鏡介入は偶発症等の不利益を相対的に増大させる。しかし、低リスク者に対する検診介入を単に「個人の自己決定（informed choice）」へ委ねる設計は、ヘルスリテラシーや所得水準による受診行動の分化を招き、結果として健康格差（inverse care law）を拡大させる危険性が高い<sup>25)</sup>。</p>
+            <p class="indent">したがって、2026年からの組織型検診において倫理的に許容される制度設計は、個人の自己責任へ還元するのではなく、システムとしての担保が不可欠である。<br>
+            1. 低侵襲スクリーニングへの公平なアクセス：若年層におけるピロリ感染診断等の低侵襲な一次スクリーニングに対し、経済的・地理的障壁を排除した公平なアクセスを保障すること。<br>
+            2. 高リスク者への資源優先配分とトリアージ：戦略Pのシミュレーションが示す通り、内視鏡資源を低リスク者から解放し、除菌後高度萎縮等の高リスク者へ優先的かつ集中的に投入する運用スキームを確立すること。<br>
+            3. 意思決定支援（Shared Decision Making）の標準化：低リスク群に対しては、不確実性や過剰診断のリスクを含む標準化された情報提供を行い、システムレベルでの理解支援を制度に組み込むこと。</p>
+
+            <div class="page-break"></div>
+
+            <div class="heading1">文献</div>
+            <p class="reference-list">1) Ueda J, Gosho M, Inui Y, et al. Prevalence of Helicobacter pylori infection by birth year and geographic area in Japan. Helicobacter. 2014;19(2):105-110.</p>
+            <p class="reference-list">2) Wang C, Nishiyama T, Kikuchi S, et al. Changing trends in the prevalence of H. pylori infection in Japan (1908-2003): a systematic review and meta-regression analysis of 170,752 individuals. Sci Rep. 2017;7:15491.</p>
+            <p class="reference-list">3) Ishibashi F, Ichita C, Takasu A, et al. The Increasing Trend of the Generational Helicobacter pylori-Naïve Prevalence Among Japanese Individuals Born Between 1925 and 2015: A Systematic Review and Meta-Regression Analysis. Helicobacter. 2025;30(3):e70052.</p>
+            <p class="reference-list">4) Huang HL, Leung CY, Saito E, et al. Effect and cost-effectiveness of national gastric cancer screening in Japan: a microsimulation modeling study. BMC Med. 2020;18:257.</p>
+            <p class="reference-list">5) Kato K, Chiba T, Shimada T, Shibuya D. Management of screening endoscopy for population-based screening for gastric cancer. Gastroenterol Endosc. 2016;58(11):2251-2261.</p>
+            <p class="reference-list">6) Miki K. Gastric cancer risk classification (ABC classification). Nihon Rinsho. 2013;71(11):1889-1895.</p>
+            <p class="reference-list">7) 厚生労働省. 第28回がん検診のあり方に関する検討会 (議事録). 令和元年5月31日.</p>
+            <p class="reference-list">8) 厚生労働省. 第44回がん検診のあり方に関する検討会 (議事録). 令和7年6月23日.</p>
+            <p class="reference-list">9) 厚生労働省. がん予防重点健康教育及びがん検診実施のための指針.</p>
+            <p class="reference-list">10) 厚生労働省. 第4期がん対策推進基本計画ロジックモデル.</p>
+            <p class="reference-list">11) 職域におけるがん検診の現状と課題について.</p>
+            <p class="reference-list">12) 被用者保険におけるがん検診の実施状況.</p>
+            <p class="reference-list">13) 厚生労働省. がん検診のあり方に関する検討会議事録 (とりまとめ).</p>
+            <p class="reference-list">14) 令和5年度市区町村におけるがん検診の実施状況調査.</p>
+            <p class="reference-list">15) Nuffield Council on Bioethics. Public health: ethical issues. 2007.</p>
+            <p class="reference-list">16) Griffiths PE. Snakes and ladders: state interventions and the place of liberty in public health policy. J Med Ethics. 2016;42(8):510-515.</p>
+            <p class="reference-list">17) Kerridge I, Lowe M, Henry D. A balanced intervention ladder: promoting autonomy through public health action. Public Health. 2015;129(8):1092-1098.</p>
+            <p class="reference-list">18) National Institute for Health and Care Excellence (NICE). Guide to the methods of technology appraisal 2013: The reference case. 2013.</p>
+            <p class="reference-list">19) Hausman DM. Valuing health properly. Health Econ Policy Law. 2008;3(3):327-335.</p>
+            <p class="reference-list">20) UK National Screening Committee. Principles of population screening: Informed choice.</p>
+            <p class="reference-list">21) UK National Screening Committee. UK NSC ethical framework for screening.</p>
+            <p class="reference-list">22) 〇〇 〇〇. ピロリ菌陰性時代における胃がん検診の適正なあり方: シミュレーション研究、新技術、政策課題の統合的考察 (未発表).</p>
+            <p class="reference-list">23) がん検診学会雑誌査読結果: 胃がん検診論文の厳格査読.</p>
+            <p class="reference-list">24) 職域検診胃がん検診の今までの役割.</p>
+            <p class="reference-list">25) がん検診学会雑誌査読結果: 胃がん検診論文の厳格査読.</p>
+        </body>
+        </html>
+    </div>
+
+    <script>
+        function downloadDoc() {
+            const content = document.getElementById('word-content').innerHTML;
+            const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'JSGCS_Submission_Manuscript.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
