@@ -42,3 +42,37 @@
 > [!IMPORTANT]
 > **安全管理・非破壊操作の縛り**
 > 今後、ファイルの書き込みや変更、破壊的なコマンドの実行前には必ず(y/n)でユーザー確認を行う。
+
+---
+
+## 5. 学んだ教訓 (Lessons Learned)
+
+### 📌 Netlify × Next.js デプロイ必須設定（2026/02/22）
+
+**症状**: Netlify にデプロイすると `404 Page not found` になる。
+
+**原因**: Next.js 16 アプリを Netlify にデプロイする際、Netlify 固有の設定ファイルとプラグインが存在しないと、Netlify がビルド方法を解釈できず空白のサイトを返す。
+
+**解決策（毎回必須）**: 以下の2点を必ず行う。
+
+#### 1. `netlify.toml` をプロジェクトルート（`gastric-risk-dashboard/`）に作成
+
+```toml
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+```
+
+#### 2. `@netlify/plugin-nextjs` をインストール
+
+```bash
+cd gastric-risk-dashboard
+npm install @netlify/plugin-nextjs
+```
+
+> [!NOTE]
+> この設定がないと、新しいブランチやサイトをNetlifyに繋ぐ度に必ず404が発生する。
+> Next.js アプリを Netlify へデプロイする際は、**最初の1手目**としてこの2点を実施すること。
