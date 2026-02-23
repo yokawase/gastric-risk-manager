@@ -8,7 +8,7 @@ import StomachCancerRisk from './StomachCancerRisk';
 
 interface Props { result: SimulationResult; userData: UserData; }
 
-const CountUp: React.FC<{ end: number; duration?: number; prefix?: string; suffix?: string; decimals?: number }> = ({ end, duration = 1500, prefix = '', suffix = '', decimals = 0 }) => {
+const CountUp: React.FC<{ end: number; duration?: number; prefix?: string; suffix?: string; decimals?: number; useGrouping?: boolean }> = ({ end, duration = 1500, prefix = '', suffix = '', decimals = 0, useGrouping = true }) => {
     const [count, setCount] = useState(0);
     useEffect(() => {
         let startTime: number | null = null;
@@ -22,7 +22,7 @@ const CountUp: React.FC<{ end: number; duration?: number; prefix?: string; suffi
         };
         requestAnimationFrame(animate);
     }, [end, duration]);
-    return <span>{prefix}{count.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}{suffix}</span>;
+    return <span>{prefix}{count.toLocaleString(undefined, { useGrouping, minimumFractionDigits: decimals, maximumFractionDigits: decimals })}{suffix}</span>;
 };
 
 const RiskFactorTable = () => {
@@ -148,7 +148,7 @@ const Dashboard: React.FC<Props> = ({ result, userData }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-6 rounded-2xl border text-center bg-white/80 backdrop-blur border-blue-100 shadow-md relative overflow-hidden">
                     <div className="text-sm text-slate-500 mb-1 font-bold">到達予測 (平均寿命)</div>
-                    <div className="text-5xl font-black text-slate-800 tracking-tight"><CountUp end={deathYear} /><span className="text-lg font-bold ml-1 text-slate-500">年</span></div>
+                    <div className="text-5xl font-black text-slate-800 tracking-tight"><CountUp end={deathYear} useGrouping={false} /><span className="text-lg font-bold ml-1 text-slate-500">年</span></div>
                     <div className="flex justify-center gap-2 mt-2 flex-wrap">
                         <div className="text-xs text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded">満 {result.lifespan}歳</div>
                         <div className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">生存確率50%: {result.median}歳</div>
