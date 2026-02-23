@@ -1,0 +1,20 @@
+{
+    "title": "胃がんリスク層別化と統計的シミュレーション根拠",
+    "summary": "全国がん登録データや生命表に基づいた、年齢階級別の胃がん罹患率、死亡率、およびリスク因子（ハザード比）による余命補正ロジックの統計的基盤。",
+    "tags": [
+        "統計",
+        "リスク層別化",
+        "ハザード比",
+        "生存率曲線",
+        "マルコフモデル"
+    ],
+    "sources": [
+        "/home/yokawase/ドキュメント/Gastric_cancer/cancer_incidenceNCR(2016-2021).pdf",
+        "/home/yokawase/ドキュメント/Gastric_cancer/cancer_mortality(1979-2024)H27.pdf",
+        "/home/yokawase/ドキュメント/Gastric_cancer/組織型検診・胃がん検診シミュレーション(PSA対応版).ipynb"
+    ],
+    "related_kis": [
+        "gastric_cancer_policy_reform",
+        "medical_ethics_and_evidence"
+    ]
+}

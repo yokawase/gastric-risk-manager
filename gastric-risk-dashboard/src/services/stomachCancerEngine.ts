@@ -1,12 +1,12 @@
 import { UserData, StomachCancerResult } from '../types';
 
 const COEFFICIENTS = {
-    intercept: -7.5,
+    intercept: -5.0,                         // [UPDATE] より実態に近いスケールへ引き上げ
     birth_year_cat: { 1990: 0, 1980: 0.2, 1970: 0.5, 1960: 0.9, 1950: 1.4, 1940: 2.0 },
     sex_M: 0.6,
-    pylori_infected: 2.5,
-    pylori_eradicated: 0.8,
-    atrophy_yes: 1.5,
+    pylori_infected: 3.0,                    // [UPDATE] 現感染リスクを強化
+    pylori_eradicated: 1.5,                  // [UPDATE] 除菌後の残存リスクを正当に評価
+    atrophy_yes: 2.0,                        // [UPDATE] 粘膜リスクを最重要視
     family_history_yes: 0.5,
     diabetes_yes: 0.2,
     smoking_current: 0.8,
@@ -15,7 +15,7 @@ const COEFFICIENTS = {
     drinking_moderate: 0.2,
 };
 
-const THRESHOLDS = { medium: 0.565, high: 0.660 };
+const THRESHOLDS = { medium: 0.15, high: 0.35 }; // [UPDATE] 新しいスケールに合わせて閾値を調整
 
 export const calculateStomachRisk = (data: UserData): StomachCancerResult => {
     const currentYear = new Date().getFullYear();
