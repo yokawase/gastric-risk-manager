@@ -5,8 +5,9 @@ import { runHealthAnalysis } from '../services/healthEngine';
 import InputForm from '../components/InputForm';
 import Dashboard from '../components/Dashboard';
 import SymptomChecker from '../components/SymptomChecker';
+import AdaptiveScreening from '../components/AdaptiveScreening';
 import OnboardingGuide from '../components/OnboardingGuide';
-import { HeartPulse, Edit3, Stethoscope, BarChart2, Building2, Menu, X } from 'lucide-react';
+import { HeartPulse, Edit3, Stethoscope, BarChart2, Building2, Menu, X, BrainCircuit } from 'lucide-react';
 
 const NavButton = ({ active, onClick, icon, label, highlight }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string; highlight?: boolean }) => (
   <button onClick={onClick} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 text-left group relative overflow-hidden ${active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
@@ -18,7 +19,7 @@ const NavButton = ({ active, onClick, icon, label, highlight }: { active: boolea
 );
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'input' | 'symptom'>('input');
+  const [activeTab, setActiveTab] = useState<'input' | 'symptom' | 'adaptive'>('input');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userData, setUserData] = useState<UserData>({
     age: 40, sex: 'male', height: 170, weight: 65, alcohol: 'none', smoking: 'never', cigarettesPerDay: 20, exercise: 'no',
@@ -26,6 +27,9 @@ export default function Home() {
     pylori: 'unknown', atrophic_gastritis: 'unknown', polypharmacy: '0',
     fam_cancer: false, parent_long: false, allergy: false, hist_cancer: false, hist_stroke: false, hist_heart: false,
     dm: false, htn: false, dl: false, inf_hep: false, inf_hpv: false,
+    sys_black_stool: false, sys_nausea: false,
+    sys_distending_pain: false, sys_belching: false, sys_hypo_pain: false, sys_water_brash: false, sys_abd_distention: false,
+    life_temp_pref: 'normal', life_cold_limbs: false, life_bitter_taste: false,
   });
   const [result, setResult] = useState<SimulationResult | null>(null);
 
@@ -35,7 +39,7 @@ export default function Home() {
     setMobileMenuOpen(false);
   };
 
-  const switchTab = (tab: 'input' | 'symptom') => { setActiveTab(tab); setMobileMenuOpen(false); };
+  const switchTab = (tab: 'input' | 'symptom' | 'adaptive') => { setActiveTab(tab); setMobileMenuOpen(false); };
   const scrollToDashboard = () => { setActiveTab('input'); setMobileMenuOpen(false); setTimeout(() => document.getElementById('dashboard-root')?.scrollIntoView({ behavior: 'smooth' }), 100); };
 
   return (
@@ -59,6 +63,7 @@ export default function Home() {
           <nav className="space-y-2">
             <NavButton active={activeTab === 'input' && !result} onClick={() => switchTab('input')} icon={<Edit3 className="w-5 h-5" />} label="問診・入力" />
             <NavButton active={activeTab === 'symptom'} onClick={() => switchTab('symptom')} icon={<Stethoscope className="w-5 h-5" />} label="症状チェック" />
+            <NavButton active={activeTab === 'adaptive'} onClick={() => switchTab('adaptive')} icon={<BrainCircuit className="w-5 h-5" />} label="アダプティブ戦略" />
             {result && <NavButton active={activeTab === 'input' && !!result} onClick={scrollToDashboard} icon={<BarChart2 className="w-5 h-5" />} label="予測ダッシュボード" highlight />}
           </nav>
         </div>
@@ -100,8 +105,10 @@ export default function Home() {
               <InputForm data={userData} onChange={setUserData} onAnalyze={handleAnalyze} />
               {result && <div className="pt-8 border-t border-slate-200/50"><Dashboard result={result} userData={userData} /></div>}
             </div>
-          ) : (
+          ) : activeTab === 'symptom' ? (
             <SymptomChecker />
+          ) : (
+            <AdaptiveScreening />
           )}
         </div>
       </main>
