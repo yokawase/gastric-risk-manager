@@ -1,0 +1,20 @@
+{
+    "title": "胃がん検診と予防政策における医学・倫理的知見",
+    "summary": "無危害の原則、最小侵害の原則、および informed choice に基づいた若年者・高齢者への検診トリアージ指針。AIヘルスコーチの助言内容における論理的根拠。",
+    "tags": [
+        "医学倫理",
+        "トリアージ",
+        "informed choice",
+        "AIコーチ",
+        "リスクベネフィット"
+    ],
+    "sources": [
+        "/home/yokawase/ドキュメント/Gastric_cancer/若年層のピロリ未感染者が胃がん検診を受ける際の倫理的課題.txt",
+        "/home/yokawase/ドキュメント/Gastric_cancer/main.p健康最適化の罠と検診・予防政策：医療倫理／公衆衛生倫理\nの観点から.pdf",
+        "/home/yokawase/ドキュメント/Gastric_cancer/内視鏡 AI 診断支援システムの臨床応用と今後の展望.pdf"
+    ],
+    "related_kis": [
+        "gastric_cancer_policy_reform",
+        "risk_stratification_logic"
+    ]
+}

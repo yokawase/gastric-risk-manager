@@ -1,0 +1,1359 @@
+import React, { useState } from 'react';
+import { UserData, SimulationResult } from './types';
+import { runHealthAnalysis } from './services/healthEngine';
+import InputForm from './components/InputForm';
+import Dashboard from './components/Dashboard';
+import SymptomChecker from './components/SymptomChecker';
+import OnboardingGuide from './components/OnboardingGuide';
+import { HeartPulse, Edit3, Stethoscope, BarChart2, Building2, UserCircle, Menu, X } from 'lucide-react';
+
+const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'input' | 'symptom'>('input');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userData, setUserData] = useState<UserData>({
+    age: 40, sex: 'male', height: 170, weight: 65, alcohol: 'none', smoking: 'never', cigarettesPerDay: 20, exercise: 'no',
+    sleep: 'optimal', social: 'moderate', diet: 'average',
+    pylori: 'unknown', atrophic_gastritis: 'unknown', polypharmacy: '0',
+    fam_cancer: false, parent_long: false, allergy: false, hist_cancer: false, hist_stroke: false, hist_heart: false, dm: false, htn: false, dl: false, inf_hep: false, inf_hpv: false,
+  });
+  const [result, setResult] = useState<SimulationResult | null>(null);
+  
+  const handleAnalyze = () => { 
+      const res = runHealthAnalysis(userData); 
+      setResult(res); 
+      setMobileMenuOpen(false); // Close menu on analyze
+  };
+
+  const switchTab = (tab: 'input' | 'symptom') => {
+      setActiveTab(tab);
+      setMobileMenuOpen(false);
+  }
+
+  const scrollToDashboard = () => {
+      setActiveTab('input');
+      setMobileMenuOpen(false);
+      setTimeout(() => document.getElementById('dashboard-root')?.scrollIntoView({behavior:'smooth'}), 100);
+  }
+
+  return (
+    <div className="flex min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900">
+      <OnboardingGuide />
+      
+      {/* Mobile Header */}
+      <div className="md:hidden fixed top-0 w-full z-40 bg-white/90 backdrop-blur border-b border-slate-200 p-4 flex justify-between items-center shadow-sm">
+         <div className="flex items-center gap-2 font-bold text-slate-800"><HeartPulse className="text-blue-600" /> Precision Health</div>
+         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-slate-600">
+            {mobileMenuOpen ? <X /> : <Menu />}
+         </button>
+      </div>
+
+      {/* Sidebar */}
+      <aside className={`fixed md:sticky top-0 h-full w-[280px] bg-slate-900 text-slate-300 z-50 transition-transform duration-300 ease-in-out md:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} flex flex-col shadow-2xl`}>
+        <div className="p-6">
+           <div className="flex items-center gap-3 text-xl font-bold text-white mb-10">
+              <div className="p-2 bg-blue-600 rounded-lg shadow-lg shadow-blue-500/50"><HeartPulse className="w-6 h-6" /></div>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-white">Precision Health</span>
+           </div>
+           
+           <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 px-2">Menu</div>
+           <nav className="space-y-2">
+             <NavButton active={activeTab === 'input' && !result} onClick={() => switchTab('input')} icon={<Edit3 className="w-5 h-5" />} label="問診・入力" />
+             <NavButton active={activeTab === 'symptom'} onClick={() => switchTab('symptom')} icon={<Stethoscope className="w-5 h-5" />} label="症状チェック" />
+             {result && (<NavButton active={activeTab === 'input' && !!result} onClick={scrollToDashboard} icon={<BarChart2 className="w-5 h-5" />} label="予測ダッシュボード" highlight />)}
+           </nav>
+        </div>
+        
+        <div className="mt-auto p-6 bg-slate-800/50 border-t border-slate-800">
+           <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold">GU</div>
+              <div>
+                  <div className="text-sm font-bold text-white">Guest User</div>
+                  <div className="text-xs text-slate-500">Free Plan</div>
+              </div>
+           </div>
+           <button className="w-full text-xs bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg font-bold transition-all shadow-lg shadow-blue-900/20">Upgrade to Pro</button>
+        </div>
+      </aside>
+
+      {/* Overlay for mobile */}
+      {mobileMenuOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setMobileMenuOpen(false)}></div>}
+
+      <main className="flex-1 p-4 md:p-10 w-full pt-20 md:pt-10 overflow-x-hidden">
+        <header className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in-up">
+          <div>
+              <h1 className="text-3xl md:text-4xl font-black text-slate-800 mb-2 tracking-tight">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600">Precision Health Manager</span>
+              </h1>
+              <p className="text-slate-500 font-medium">行動変容を科学する、あなただけの健康管理SaaS</p>
+          </div>
+          <div className="hidden md:flex items-center gap-4 bg-white/80 backdrop-blur px-5 py-2.5 rounded-full border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+             <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
+                 <Building2 className="w-4 h-4 text-slate-400" />
+                 <div className="text-sm">
+                     <div className="text-[10px] text-slate-400 uppercase font-bold">Tenant</div>
+                     <div className="font-bold text-slate-700">Demo Corp</div>
+                 </div>
+             </div>
+             <div className="flex items-center gap-2 pl-1">
+                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                 <span className="text-xs font-bold text-slate-500">System Online</span>
+             </div>
+          </div>
+        </header>
+
+        <div className="animate-fade-in-up" style={{animationDelay: '100ms'}}>
+            {activeTab === 'input' ? (
+                <div className="space-y-8">
+                    <InputForm data={userData} onChange={setUserData} onAnalyze={handleAnalyze} />
+                    {result && <div className="pt-8 border-t border-slate-200/50"><Dashboard result={result} userData={userData} /></div>}
+                </div>
+            ) : (
+                <SymptomChecker />
+            )}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+const NavButton = ({ active, onClick, icon, label, highlight }: any) => (
+    <button onClick={onClick} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 text-left group relative overflow-hidden ${active ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
+        {highlight && !active && <div className="absolute inset-0 bg-blue-500/10 animate-pulse"></div>}
+        <div className={`w-6 flex justify-center transition-transform group-hover:scale-110 ${active ? 'text-white' : ''}`}>{icon}</div>
+        <span className="font-bold text-sm tracking-wide">{label}</span>
+        {active && <div className="absolute right-4 w-1.5 h-1.5 rounded-full bg-white shadow-sm"></div>}
+    </button>
+);
+
+export default App;
+
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
+
+# Run and deploy your AI Studio app
+
+This contains everything you need to run your app locally.
+
+View your app in AI Studio: https://ai.studio/apps/drive/1VBE8LKDuIAfWxCDPgOOWo-pfO2xrMiRU
+
+## Run Locally
+
+**Prerequisites:**  Node.js
+
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
+
+export const ANNUAL_HOURS = 2080; // 8h * 5days * 52weeks
+export const RETIREMENT_AGE = 65;
+
+// 国税庁「民間給与実態統計調査」などを参考にした概算値
+export const WAGE_STATS = {
+    MEAN: 2200,
+    LOWER: 1500, // 信頼区間 下限 (25パーセンタイル相当)
+    UPPER: 3500  // 信頼区間 上限 (75パーセンタイル相当)
+};
+
+export const CONST_QX_MALE = [0.00074,0.00025,0.00018,0.00013,0.0001,9e-05,8e-05,8e-05,7e-05,7e-05,7e-05,8e-05,0.00011,0.00017,0.00023,0.00031,0.00039,0.00047,0.00054,0.00062,0.00068,0.00074,0.00079,0.00082,0.00085,0.00087,0.00089,0.00091,0.00093,0.00096,0.001,0.00105,0.0011,0.00116,0.00123,0.00132,0.00142,0.00154,0.00169,0.00185,0.00204,0.00224,0.00247,0.00273,0.00303,0.00336,0.00374,0.00417,0.00463,0.00514,0.0057,0.00631,0.00699,0.00774,0.00856,0.00946,0.01047,0.01157,0.01279,0.01412,0.01559,0.01721,0.01898,0.02092,0.02302,0.02531,0.02778,0.03046,0.03335,0.03647,0.03985,0.0435,0.04743,0.05168,0.05625,0.06118,0.06648,0.07217,0.07829,0.08485,0.09189,0.09943,0.1075,0.11613,0.12535,0.13519,0.14567,0.15683,0.16868,0.18125,0.19456,0.20862,0.22345,0.23906,0.25545,0.27263,0.2906,0.30935,0.32887,0.34914,0.37012,0.39179,0.41408,0.43695,0.46033,1.0];
+export const CONST_EX_MALE = [81.09,80.24,79.26,78.27,77.28,76.29,75.30,74.30,73.31,72.31,71.32,70.33,69.33,68.34,67.35,66.36,65.37,64.38,63.40,62.42,61.44,60.47,59.49,58.52,57.55,56.58,55.60,54.63,53.65,52.68,51.71,50.73,49.76,48.79,47.82,46.85,45.88,44.92,43.95,42.99,42.03,41.07,40.11,39.16,38.21,37.26,36.31,35.37,34.43,33.49,32.57,31.64,30.72,29.81,28.91,28.01,27.12,26.23,25.36,24.49,23.63,22.78,21.94,21.10,20.28,19.47,18.67,17.88,17.11,16.35,15.60,14.86,14.14,13.44,12.75,12.08,11.43,10.79,10.16,9.55,8.96,8.39,7.84,7.31,6.80,6.31,5.85,5.41,5.01,4.62,4.27,3.95,3.63,3.33,3.05,2.78,2.53,2.30,2.08,1.88,1.69,1.52,1.36,1.22,1.09,0.97];
+export const CONST_QX_FEMALE = [0.00067,0.00025,0.00019,0.00014,0.0001,8e-05,7e-05,7e-05,6e-05,6e-05,6e-05,6e-05,7e-05,9e-05,0.00012,0.00015,0.00018,0.00022,0.00026,0.00029,0.00032,0.00035,0.00037,0.00039,0.00041,0.00042,0.00043,0.00045,0.00047,0.00050,0.00053,0.00057,0.00061,0.00066,0.00071,0.00076,0.00082,0.00089,0.00096,0.00104,0.00113,0.00124,0.00135,0.00148,0.00162,0.00179,0.00197,0.00217,0.0024,0.00265,0.00293,0.00324,0.00359,0.00398,0.00441,0.00488,0.00541,0.00599,0.00664,0.00736,0.00815,0.00901,0.00997,0.01102,0.01217,0.01344,0.01482,0.01634,0.018,0.01981,0.0218,0.02397,0.02635,0.02896,0.03182,0.03495,0.03838,0.04215,0.04629,0.05083,0.05581,0.06127,0.06726,0.07384,0.08105,0.08895,0.09761,0.10709,0.11746,0.12881,0.14121,0.15475,0.16951,0.18558,0.20304,0.22197,0.24245,0.26457,0.2884,0.31399,0.34138,0.37062,0.4017,0.43462,0.46933,0.50577,1.0];
+export const CONST_EX_FEMALE = [87.13,86.28,85.31,84.32,83.33,82.34,81.35,80.36,79.36,78.37,77.37,76.38,75.38,74.39,73.39,72.41,71.42,70.43,69.45,68.46,67.48,66.50,65.52,64.54,63.56,62.58,61.59,60.61,59.63,58.65,57.67,56.68,55.70,54.72,53.74,52.76,51.78,50.80,49.82,48.85,47.88,46.90,45.93,44.96,43.99,43.03,42.06,41.10,40.15,39.19,38.24,37.30,36.35,35.41,34.48,33.54,32.61,31.69,30.76,29.84,28.92,28.00,27.09,26.18,25.28,24.38,23.49,22.60,21.72,20.84,19.97,19.11,18.25,17.41,16.58,15.75,14.94,14.14,13.35,12.58,11.83,11.09,10.38,9.69,9.01,8.37,7.75,7.15,6.59,6.05,5.55,5.08,4.65,4.24,3.84,3.47,3.14,2.84,2.56,2.31,2.08,1.88,1.69,1.52,1.37,1.23];
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error("Could not find root element to mount to");
+}
+
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+{
+  "name": "Precision Health Manager20251204",
+  "description": "Evidence-based life expectancy and economic value simulation based on health habits.",
+  "requestFramePermissions": []
+}
+
+{
+  "name": "precision-health-manager",
+  "private": true,
+  "version": "5.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "^0.330.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.12.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.0"
+  }
+}
+
+export type Sex = 'male' | 'female';
+export type Alcohol = 'none' | 'moderate' | 'heavy';
+export type Smoking = 'never' | 'past' | 'current';
+export type Exercise = 'yes' | 'no';
+export type Pylori = 'unknown' | 'negative' | 'eradicated' | 'current';
+export type Polypharmacy = '0' | '1-4' | '5+';
+export type AtrophicGastritis = 'unknown' | 'yes' | 'no';
+
+// New Factors
+export type Sleep = 'optimal' | 'short' | 'long';
+export type Social = 'active' | 'moderate' | 'isolated';
+export type Diet = 'good' | 'average' | 'poor';
+
+export interface UserData {
+  age: number;
+  sex: Sex;
+  height: number;
+  weight: number;
+  alcohol: Alcohol;
+  smoking: Smoking;
+  cigarettesPerDay: number; // Added for precise HR
+  exercise: Exercise;
+  // New Fields
+  sleep: Sleep;
+  social: Social;
+  diet: Diet;
+  
+  pylori: Pylori;
+  atrophic_gastritis: AtrophicGastritis;
+  polypharmacy: Polypharmacy;
+  fam_cancer: boolean;
+  parent_long: boolean;
+  allergy: boolean;
+  hist_cancer: boolean;
+  hist_stroke: boolean;
+  hist_heart: boolean;
+  dm: boolean;
+  htn: boolean;
+  dl: boolean;
+  inf_hep: boolean;
+  inf_hpv: boolean;
+}
+
+export interface StomachCancerResult {
+  score: number; // 1-99
+  level: 'low' | 'medium' | 'high' | 'unknown';
+  advice: string;
+  contributions: { label: string; value: number; isPositive: boolean }[];
+}
+
+export interface EconomicValue {
+  value: number; // Mean value
+  min: number;   // Confidence interval lower bound
+  max: number;   // Confidence interval upper bound
+}
+
+export interface SimulationResult {
+  le: number; // Life Expectancy
+  lifespan: number;
+  median: number;
+  diff: number;
+  official: number;
+  curve: { age: number; survival: number; avgSurvival: number }[];
+  economic: {
+    currentLoss: EconomicValue;
+    potentialGain: EconomicValue;
+    workYearsAvg: number;
+    workYearsCurrent: number;
+  };
+  factors: { label: string; hr: number; impact: number }[];
+  stomachRisk?: StomachCancerResult;
+}
+
+import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { SimulationResult, UserData } from '../types';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
+import { DollarSign, TrendingUp, Share2, Copy, HeartPulse, Download, Activity, Send, ThumbsUp, AlertTriangle, Mail, ChevronDown, ChevronUp, Check, X as XIcon, Twitter, MessageCircle, MoreHorizontal } from 'lucide-react';
+import StomachCancerRisk from './StomachCancerRisk';
+
+interface Props { result: SimulationResult; userData: UserData; }
+
+// CountUp Component
+const CountUp: React.FC<{ end: number; duration?: number; prefix?: string; suffix?: string; decimals?: number }> = ({ end, duration = 1500, prefix = "", suffix = "", decimals = 0 }) => {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        let startTime: number | null = null;
+        const animate = (timestamp: number) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+            const percentage = Math.min(progress / duration, 1);
+            
+            // Ease out quart
+            const ease = 1 - Math.pow(1 - percentage, 4);
+            
+            setCount(end * ease);
+            if (progress < duration) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+    }, [end, duration]);
+
+    return (
+        <span>
+            {prefix}{count.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}{suffix}
+        </span>
+    );
+};
+
+// HR一覧表示用コンポーネント
+const RiskFactorTable = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div className="mt-4 border-t border-slate-100 pt-2">
+            <button onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-2 text-xs text-slate-500 hover:text-blue-600 transition-colors mx-auto py-2">
+                {isOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                <span>エビデンスに基づくリスク強度(HR)を確認する</span>
+            </button>
+            {isOpen && (
+                <div className="mt-3 overflow-x-auto animate-fade-in-up">
+                    <table className="w-full text-xs text-left text-slate-600 border-collapse">
+                        <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                            <tr><th className="p-2">リスク因子</th><th className="p-2 text-center">強度(HR)</th><th className="p-2">備考</th></tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            <tr><td className="p-2 font-bold text-red-600">現在喫煙(重)</td><td className="p-2 text-center font-bold">2.20</td><td className="p-2">1日20本以上</td></tr>
+                            <tr><td className="p-2 font-bold text-red-600">脳卒中既往</td><td className="p-2 text-center font-bold">2.00</td><td className="p-2">再発リスク大</td></tr>
+                            <tr><td className="p-2 font-bold text-red-600">心疾患既往</td><td className="p-2 text-center font-bold">1.80</td><td className="p-2">心不全リスク含む</td></tr>
+                            <tr><td className="p-2 font-bold text-red-600">低体重(フレイル)</td><td className="p-2 text-center font-bold">1.80</td><td className="p-2">75歳以上の場合</td></tr>
+                            <tr><td className="p-2 font-bold text-red-600">糖尿病</td><td className="p-2 text-center font-bold">1.75</td><td className="p-2">全死亡リスクへの影響大</td></tr>
+                            <tr><td className="p-2 font-bold text-red-600">現在喫煙(中)</td><td className="p-2 text-center font-bold">1.70</td><td className="p-2">1日10-19本</td></tr>
+                            <tr><td className="p-2 text-amber-600">低体重</td><td className="p-2 text-center font-bold">1.60</td><td className="p-2">BMI 18.5未満</td></tr>
+                            <tr><td className="p-2 text-amber-600">多量飲酒</td><td className="p-2 text-center font-bold">1.55</td><td className="p-2">週450g以上</td></tr>
+                            <tr><td className="p-2 text-amber-600">がん既往</td><td className="p-2 text-center font-bold">1.40</td><td className="p-2">サバイバーリスク</td></tr>
+                            <tr><td className="p-2 text-amber-600">過去喫煙</td><td className="p-2 text-center font-bold">1.35</td><td className="p-2">残存リスクあり</td></tr>
+                            <tr><td className="p-2 text-amber-600">現在喫煙(軽)</td><td className="p-2 text-center font-bold">1.30</td><td className="p-2">1日10本未満</td></tr>
+                            <tr><td className="p-2 text-amber-600">社会的孤立</td><td className="p-2 text-center font-bold">1.30</td><td className="p-2">喫煙に匹敵するリスク</td></tr>
+                        </tbody>
+                    </table>
+                    <div className="text-[10px] text-slate-400 mt-2 text-right">出典: JPHC Study, JACC Study, JAGES等に基づく推計</div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// Share Modal using React Portal
+const ShareModal: React.FC<{
+    isOpen: boolean;
+    onClose: () => void;
+    shareText: string;
+    groupShareText: string;
+    appUrl: string;
+    onCopy: (text: string) => void;
+}> = ({ isOpen, onClose, shareText, groupShareText, appUrl, onCopy }) => {
+    if (!isOpen) return null;
+
+    const [mode, setMode] = useState<'normal' | 'group'>('normal');
+    const activeText = mode === 'normal' ? shareText : groupShareText;
+
+    const encodedText = encodeURIComponent(activeText);
+    const lineUrl = `https://line.me/R/msg/text/?${encodedText}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+    
+    const canUseWebShare = typeof navigator !== 'undefined' && !!navigator.share;
+
+    const handleWebShare = async () => {
+        try {
+            await navigator.share({
+                title: 'Precision Health 診断結果',
+                text: activeText,
+                url: appUrl,
+            });
+            onClose();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // Use createPortal to render the modal at the body level
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in" style={{margin: 0}}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden relative animate-scale-in">
+                <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <h3 className="font-bold text-slate-700">診断結果をシェア</h3>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-200 transition-colors">
+                        <XIcon className="w-5 h-5" />
+                    </button>
+                </div>
+                
+                <div className="flex border-b border-slate-100">
+                    <button onClick={() => setMode('normal')} className={`flex-1 py-3 text-sm font-bold transition-all ${mode === 'normal' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' : 'text-slate-500 hover:bg-slate-50'}`}>
+                        通常シェア
+                    </button>
+                    <button onClick={() => setMode('group')} className={`flex-1 py-3 text-sm font-bold transition-all ${mode === 'group' ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50' : 'text-slate-500 hover:bg-slate-50'}`}>
+                        グループで比較
+                    </button>
+                </div>
+
+                <div className="p-6">
+                    {mode === 'group' && (
+                        <div className="mb-4 text-xs text-indigo-600 bg-indigo-50 p-3 rounded-lg border border-indigo-100 flex gap-2">
+                             <TrendingUp className="w-4 h-4 shrink-0" />
+                             友人や家族のグループLINEに送信して、みんなで健康余命を競い合いましょう！
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <a href={lineUrl} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-4 bg-[#06c755] text-white rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all gap-2">
+                            <MessageCircle className="w-8 h-8" />
+                            <span className="font-bold text-sm">LINE</span>
+                        </a>
+                        <a href={twitterUrl} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-4 bg-black text-white rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all gap-2">
+                            <Twitter className="w-8 h-8" />
+                            <span className="font-bold text-sm">X (Twitter)</span>
+                        </a>
+                        <button onClick={() => { onCopy(activeText); onClose(); }} className="flex flex-col items-center justify-center p-4 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 transition-all gap-2">
+                            <Copy className="w-8 h-8 text-slate-500" />
+                            <span className="font-bold text-sm">コピー</span>
+                        </button>
+                        {canUseWebShare ? (
+                            <button onClick={handleWebShare} className="flex flex-col items-center justify-center p-4 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition-all gap-2">
+                                <MoreHorizontal className="w-8 h-8" />
+                                <span className="font-bold text-sm">その他</span>
+                            </button>
+                        ) : (
+                             <div className="flex flex-col items-center justify-center p-4 border border-slate-100 rounded-xl gap-2 opacity-50 cursor-not-allowed">
+                                <MoreHorizontal className="w-8 h-8 text-slate-300" />
+                                <span className="font-bold text-xs text-slate-400">未対応</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>,
+        document.body
+    );
+};
+
+const Dashboard: React.FC<Props> = ({ result, userData }) => {
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [actionFeedback, setActionFeedback] = useState<{msg: string, type: 'success' | 'error'} | null>(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  
+  const currentYear = new Date().getFullYear();
+  const deathYear = Math.floor(currentYear + result.le);
+  const formatMoney = (val: number) => `¥${Math.floor(val).toLocaleString()}`;
+  const formatRange = (min: number, max: number) => `変動範囲: ${formatMoney(min)} 〜 ${formatMoney(max)}`;
+  const dSign = result.diff >= 0 ? "+" : "";
+  const appUrl = "https://health-literacy-nudge.netlify.app/";
+  
+  const shareText = `【Precision Health】診断結果\n到達予測: ${deathYear}年 (満${result.lifespan}歳)\n推定余命: あと${result.le}年\n平均との差: ${dSign}${result.diff}年\n\nあなたの余命と健康資産を可視化する「ミライ査定」\n${appUrl}\n#PrecisionHealth #ミライ査定`;
+  const groupShareText = `【挑戦状】私の寿命予測は「${deathYear}年 (満${result.lifespan}歳)」でした！\n\nあなたの余命は西暦何年まで？\nグループのみんなでスコアを競ってみよう！\n\n診断はこちらから👇\n${appUrl}`;
+
+  const showActionFeedback = (msg: string, type: 'success' | 'error' = 'success') => {
+      setActionFeedback({ msg, type });
+      setTimeout(() => setActionFeedback(null), 3000);
+  };
+
+  const copyResult = async (textToCopy: string, silent = false) => {
+    // Note: textToCopy should already include the URL if needed.
+    const fullText = textToCopy;
+    
+    const success = () => !silent && showActionFeedback("クリップボードにコピーしました");
+    const fail = () => !silent && showActionFeedback("コピーに失敗しました", 'error');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+            await navigator.clipboard.writeText(fullText);
+            success();
+            return;
+        } catch (e) { console.warn(e); }
+    }
+    try {
+        const textArea = document.createElement("textarea");
+        textArea.value = fullText;
+        textArea.style.position = "fixed";
+        textArea.style.left = "0";
+        textArea.style.top = "0";
+        textArea.style.opacity = "0";
+        textArea.setAttribute("readonly", "");
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, 99999);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        if (successful) success(); else fail();
+    } catch (err) { fail(); }
+  };
+
+  const handleDownloadReport = () => {
+    const dateStr = new Date().toLocaleDateString("ja-JP");
+    const bmi = (userData.weight / Math.pow(userData.height / 100, 2)).toFixed(1);
+    const reportContent = `Precision Health Manager Report\n${shareText}\n...`; // Simplified for brevity
+    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Report_${dateStr.replace(/\//g, '-')}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleFeedbackSubmit = () => {
+    if(!feedbackText.trim()) return;
+    setFeedbackSent(true);
+    setTimeout(() => { setFeedbackSent(false); setFeedbackText(""); }, 3000);
+  };
+
+  useEffect(() => { document.getElementById('dashboard-root')?.scrollIntoView({ behavior: 'smooth' }); }, [result]);
+
+  const getAiAdvice = () => {
+    const adviceMap: Record<string, string> = {
+      "現在喫煙(軽)": "禁煙", "現在喫煙(中)": "禁煙", "現在喫煙(重)": "直ちに禁煙外来へ",
+      "運動不足": "運動習慣の定着", "多量飲酒": "節酒", "肥満(重)": "減量", "肥満(軽)": "体重コントロール",
+      "野菜不足": "毎食の野菜摂取", "睡眠不足(<6h)": "睡眠時間の確保", "過眠(>9h)": "睡眠リズムの調整",
+      "社会的孤立": "社会参加・交流", "ピロリ現感染": "ピロリ菌除菌", "糖尿病": "血糖コントロール",
+      "高血圧": "血圧管理", "高脂血症": "脂質管理", "低体重": "栄養摂取", "低体重(フレイル)": "栄養摂取・筋力維持"
+    };
+
+    const riskFactors = result.factors.filter(f => f.impact < 0).sort((a, b) => a.impact - b.impact);
+    if (riskFactors.length === 0) return <span>素晴らしい健康管理です！現在の生活習慣はあなたの強力な資産になっています。</span>;
+
+    const topRisks = riskFactors.slice(0, 2).map(f => {
+        for (const key in adviceMap) if (f.label.includes(key) || key.includes(f.label)) return adviceMap[key];
+        return "生活習慣の改善";
+    });
+    const uniqueRisks = Array.from(new Set(topRisks));
+    const adviceList = uniqueRisks.join("・");
+
+    if (result.economic.potentialGain.value > 0) {
+        return <span>あなたの体にはまだ<span className="font-bold text-blue-600 text-lg mx-1"><CountUp end={result.economic.potentialGain.value} prefix="¥" /></span>分の「伸びしろ」があります！特に「{adviceList}」に取り組むことで、健康資産を大きく取り戻せる可能性があります。</span>;
+    } else {
+        return <span>人生100年時代、健康こそが最大の資産です。健康寿命を延ばすために、特に「{adviceList}」の見直しをお勧めします。</span>;
+    }
+  };
+
+  return (
+    <div id="dashboard-root" className="space-y-6 pb-20 md:pb-0">
+      {/* AI Coach Card */}
+      <div className="bg-blue-50/80 backdrop-blur-sm p-6 rounded-2xl border border-blue-200/60 flex gap-4 items-start shadow-sm animate-fade-in-up">
+         <div className="bg-white p-3 rounded-full shrink-0 text-blue-600 shadow-sm animate-pulse-slow"><HeartPulse className="w-8 h-8" /></div>
+         <div className="flex-1"><h4 className="font-bold text-blue-800 mb-1">AIヘルスコーチ</h4><div className="text-slate-800 leading-relaxed">{getAiAdvice()}</div></div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Main Metrics with staggered animation */}
+        <div className="p-6 rounded-2xl border text-center bg-white/80 backdrop-blur border-blue-100 shadow-md relative overflow-hidden group animate-fade-in-up" style={{animationDelay: '100ms'}}>
+           <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity"><TrendingUp className="w-24 h-24 text-blue-600" /></div>
+           <div className="text-sm text-slate-500 mb-1 font-bold">到達予測 (平均寿命)</div>
+           <div className="text-5xl font-black text-slate-800 tracking-tight"><CountUp end={deathYear} /><span className="text-lg font-bold ml-1 text-slate-500">年</span></div>
+           <div className="flex justify-center gap-2 mt-2 flex-wrap">
+                <div className="text-xs text-slate-500 font-bold bg-slate-100 px-2 py-1 rounded">満 {result.lifespan}歳</div>
+                <div className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">生存確率50%: {result.median}歳</div>
+           </div>
+        </div>
+        <MetricCard label="推定余命 (あと何年)" value={result.le} unit="年" sub={`同年代平均: ${result.official}年`} delay="200ms" />
+        <MetricCard label="平均との差 (健康ボーナス)" value={result.diff} unit="年" prefix={result.diff >= 0 ? "+" : ""} highlight={result.diff >= 0} sub="生活習慣の積み重ねの結果" delay="300ms" />
+      </div>
+
+      {/* Factors */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-200/60 p-6 animate-fade-in-up" style={{animationDelay: '400ms'}}>
+        <div className="border-b border-slate-100 pb-4 mb-4 font-bold text-lg text-slate-800 flex items-center gap-2">
+            <div className="p-1.5 bg-indigo-100 text-indigo-600 rounded"><Activity className="w-5 h-5" /></div>
+            寿命への影響因子
+        </div>
+        <div className="space-y-4">
+          {result.factors.map((f, i) => {
+            const isPositive = f.impact >= 0;
+            const width = Math.min(Math.abs(f.impact) * 8, 100);
+            return (
+              <div key={i} className="flex items-center text-sm group">
+                <div className="w-32 md:w-48 font-bold text-slate-600 truncate group-hover:text-blue-600 transition-colors" title={f.label}>{f.label}</div>
+                <div className="flex-1 mx-3 h-3 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                    <div className={`h-full rounded-full transition-all duration-1000 ease-out ${isPositive ? 'bg-gradient-to-r from-emerald-400 to-emerald-500' : 'bg-gradient-to-r from-rose-400 to-rose-500'}`} style={{ width: `${width}%` }}/>
+                </div>
+                <div className={`w-20 text-right font-mono font-bold ${isPositive ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    {isPositive ? '+' : ''}{f.impact.toFixed(1)}年
+                </div>
+              </div>
+            );
+          })}
+          {result.factors.length === 0 && <div className="text-slate-500 text-sm text-center py-4 bg-slate-50 rounded">特筆すべき影響因子はありません</div>}
+        </div>
+        <RiskFactorTable />
+      </div>
+
+      {userData.age >= 75 && (
+        <div className="bg-amber-50/80 backdrop-blur rounded-2xl border border-amber-200 p-6 animate-fade-in-up">
+           <div className="flex items-center gap-2 mb-4"><AlertTriangle className="w-6 h-6 text-amber-600" /><h3 className="font-bold text-lg text-amber-800">検診に関するお知らせ</h3></div>
+           <div className="bg-white/60 p-4 rounded-xl border border-amber-100 text-sm text-slate-700">
+             75歳以上の検診はリスクとベネフィットを慎重に判断する必要があります。主治医とよく相談してください。
+           </div>
+        </div>
+      )}
+
+      {result.stomachRisk && <StomachCancerRisk result={result.stomachRisk} />}
+
+      {/* Economic Impact */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-200/60 p-6 animate-fade-in-up" style={{animationDelay: '500ms'}}>
+        <div className="border-b border-slate-100 pb-4 mb-4 font-bold text-lg text-slate-800 flex items-center gap-2">
+            <div className="p-1.5 bg-emerald-100 text-emerald-600 rounded"><DollarSign className="w-5 h-5" /></div>
+            経済的インパクト (65歳定年)
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`p-5 rounded-xl border transition-transform hover:scale-[1.01] ${result.economic.currentLoss.value === 0 ? 'bg-slate-50 border-slate-200' : 'bg-rose-50 border-rose-200'}`}>
+             <div className={`font-bold text-sm mb-1 ${result.economic.currentLoss.value === 0 ? 'text-slate-600' : 'text-rose-700'}`}>{result.economic.currentLoss.value === 0 ? '労働価値損失なし' : '⚠️ 現在の推定損失'}</div>
+             <div className={`text-3xl font-bold font-mono ${result.economic.currentLoss.value === 0 ? 'text-slate-600' : 'text-rose-600'}`}>
+                {result.economic.currentLoss.value === 0 ? '¥0' : <span>-<CountUp end={result.economic.currentLoss.value} /></span>}
+             </div>
+             {result.economic.currentLoss.value > 0 && <div className="text-[10px] text-rose-500 mt-2 font-bold bg-white/50 px-2 py-1 rounded inline-block shadow-sm">{formatRange(result.economic.currentLoss.min, result.economic.currentLoss.max)}</div>}
+          </div>
+          <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200 transition-transform hover:scale-[1.01]">
+             <div className="font-bold text-sm text-emerald-800 mb-1">💰 獲得可能な「追加ボーナス」</div>
+             <div className="text-3xl font-bold font-mono text-emerald-600">+<CountUp end={result.economic.potentialGain.value} /></div>
+             {result.economic.potentialGain.value > 0 && <div className="text-[10px] text-emerald-600 mt-2 font-bold bg-white/50 px-2 py-1 rounded inline-block shadow-sm">{formatRange(result.economic.potentialGain.min, result.economic.potentialGain.max)}</div>}
+          </div>
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-200/60 p-6 animate-fade-in-up" style={{animationDelay: '600ms'}}>
+        <div className="border-b border-slate-100 pb-4 mb-4 font-bold text-lg text-slate-800 flex items-center gap-2">
+            <div className="p-1.5 bg-blue-100 text-blue-600 rounded"><TrendingUp className="w-5 h-5" /></div>
+            ライフコース・シミュレーション
+        </div>
+        <div className="h-[400px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={result.curve} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+              <XAxis dataKey="age" unit="歳" tick={{fontSize: 12}} stroke="#94a3b8" />
+              <YAxis domain={[0, 1]} tickFormatter={(val) => `${Math.round(val * 100)}%`} tick={{fontSize: 12}} stroke="#94a3b8" />
+              <Tooltip 
+                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', background: 'rgba(255, 255, 255, 0.95)' }}
+                formatter={(value: number) => [`${(value * 100).toFixed(1)}%`, '生存率']} 
+                labelFormatter={(l) => `${l}歳`} 
+              />
+              <Legend />
+              <ReferenceLine y={0.5} stroke="#cbd5e1" strokeDasharray="3 3" />
+              <Line type="monotone" dataKey="survival" stroke="#2563eb" strokeWidth={3} dot={false} name="あなた" animationDuration={2000} />
+              <Line type="monotone" dataKey="avgSurvival" stroke="#94a3b8" strokeWidth={2} strokeDasharray="5 5" dot={false} name="平均" animationDuration={2000} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      
+      {/* Feedback & Actions */}
+      <div className="bg-slate-100/80 backdrop-blur rounded-2xl p-6 border border-slate-200 animate-fade-in-up" style={{animationDelay: '700ms'}}>
+         <h4 className="font-bold text-slate-700 mb-2 flex items-center gap-2"><ThumbsUp className="w-4 h-4" /> フィードバック</h4>
+         <div className="flex gap-2">
+            <input type="text" className="flex-1 p-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-slate-400 outline-none transition-all" placeholder="改善要望などを入力..." value={feedbackText} onChange={(e) => setFeedbackText(e.target.value)}/>
+            <button onClick={handleFeedbackSubmit} disabled={feedbackSent} className={`px-6 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all ${feedbackSent ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' : 'bg-slate-800 text-white hover:bg-slate-700 shadow-lg'}`}>{feedbackSent ? <Send className="w-4 h-4" /> : '送信'}</button>
+         </div>
+         {feedbackSent && <span className="text-xs text-green-600 mt-2 block font-bold">フィードバックを送信しました。</span>}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in-up" style={{animationDelay: '800ms'}}>
+        <button onClick={() => setIsShareModalOpen(true)} className="flex items-center justify-center gap-2 p-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-[1.01] transition-all">
+            <Share2 className="w-5 h-5" /> 結果をシェア
+        </button>
+        <button onClick={() => copyResult(shareText, false)} className="flex items-center justify-center gap-2 p-4 bg-slate-700 text-white font-bold rounded-2xl shadow-lg hover:bg-slate-800 hover:scale-[1.01] transition-all">
+            <Copy className="w-5 h-5" /> 結果をコピー
+        </button>
+        <button onClick={handleDownloadReport} className="col-span-1 sm:col-span-2 flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/30 hover:scale-[1.01] transition-all relative overflow-hidden group">
+            <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-3 py-1 rounded-bl-xl shadow-sm z-10">Pro Feature</div>
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            <Download className="w-5 h-5 relative z-10" /> <span className="relative z-10">レポート保存 (.txt)</span>
+        </button>
+      </div>
+
+      <ShareModal isOpen={isShareModalOpen} onClose={() => setIsShareModalOpen(false)} shareText={shareText} groupShareText={groupShareText} appUrl={appUrl} onCopy={copyResult} />
+      {actionFeedback && (<div className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-50 text-sm font-bold py-3 px-6 rounded-full shadow-2xl animate-fade-in-up ${actionFeedback.type === 'error' ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`}>{actionFeedback.type === 'success' && <Check className="w-4 h-4 inline mr-2" />}{actionFeedback.msg}</div>)}
+    </div>
+  );
+};
+
+const MetricCard = ({ label, value, unit, sub, prefix = "", highlight, delay }: any) => {
+    return (
+        <div className={`p-6 rounded-2xl border text-center relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg animate-fade-in-up ${highlight ? 'bg-blue-50/80 border-blue-200 shadow-blue-500/10' : 'bg-white/80 border-slate-100 shadow-sm'}`} style={{animationDelay: delay}}>
+           <div className="text-sm text-slate-500 mb-1 font-bold">{label}</div>
+           <div className={`text-4xl font-black ${highlight ? 'text-blue-600' : 'text-slate-800'} tracking-tight`}>
+              {prefix}<CountUp end={value} decimals={1} /><span className="text-lg font-bold ml-1 text-slate-400">{unit}</span>
+           </div>
+           <div className="text-xs text-slate-400 mt-2 font-medium bg-slate-100/50 inline-block px-2 py-0.5 rounded">{sub}</div>
+        </div>
+    )
+}
+export default Dashboard;
+
+import React from 'react';
+import { UserData, Sleep, Social, Diet, Pylori, AtrophicGastritis, Polypharmacy } from '../types';
+import { User, Activity, FileText, Calculator, HelpCircle, Cigarette, Check } from 'lucide-react';
+
+interface Props {
+  data: UserData;
+  onChange: (data: UserData) => void;
+  onAnalyze: () => void;
+}
+
+const TooltipLabel: React.FC<{ label: string; tooltip: string; color?: string }> = ({ label, tooltip, color = "text-slate-600" }) => (
+  <div className="flex items-center gap-2 mb-2 group relative w-fit">
+    <label className={`block text-sm font-bold ${color}`}>{label}</label>
+    <HelpCircle className="w-4 h-4 text-slate-400 cursor-help hover:text-blue-500 transition-colors" />
+    <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block w-64 bg-slate-800/95 backdrop-blur text-white text-xs p-3 rounded-lg shadow-xl z-20 leading-relaxed border border-slate-700 animate-fade-in-up">
+      {tooltip}
+      <div className="absolute top-full left-4 -mt-1 border-4 border-transparent border-t-slate-800"></div>
+    </div>
+  </div>
+);
+
+// リッチな選択カードコンポーネント（チェックボックスの代わり）
+const SelectionCard: React.FC<{ 
+  checked: boolean; 
+  onChange: (checked: boolean) => void; 
+  label: string; 
+  subLabel?: string;
+  risk?: boolean 
+}> = ({ checked, onChange, label, subLabel, risk }) => (
+  <div 
+    onClick={() => onChange(!checked)}
+    className={`relative p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 group flex items-start gap-3
+      ${checked 
+        ? (risk ? 'bg-red-50 border-red-500 shadow-md' : 'bg-blue-50 border-blue-500 shadow-md') 
+        : 'bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm'
+      }`}
+  >
+    <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-colors
+      ${checked 
+        ? (risk ? 'bg-red-500 border-red-500' : 'bg-blue-500 border-blue-500') 
+        : 'bg-white border-slate-300 group-hover:border-slate-400'
+      }`}>
+      {checked && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
+    </div>
+    <div className="flex-1">
+      <div className={`text-sm font-bold transition-colors ${checked ? 'text-slate-800' : 'text-slate-600'}`}>{label}</div>
+      {subLabel && <div className="text-xs text-slate-400 mt-0.5">{subLabel}</div>}
+    </div>
+  </div>
+);
+
+const InputForm: React.FC<Props> = ({ data, onChange, onAnalyze }) => {
+  const handleChange = <K extends keyof UserData>(key: K, value: UserData[K]) => {
+    onChange({ ...data, [key]: value });
+  };
+
+  const getBMI = () => {
+    if (data.height > 0 && data.weight > 0) return (data.weight / Math.pow(data.height / 100, 2)).toFixed(1);
+    return "--";
+  };
+
+  const bmi = parseFloat(getBMI());
+  let bmiLabel = "(標準)", bmiColor = "text-emerald-600", bmiBg = "bg-emerald-100";
+  if (bmi < 18.5) { bmiLabel = "(低体重)"; bmiColor = "text-red-500"; bmiBg = "bg-red-100"; }
+  else if (bmi >= 25 && bmi < 30) { bmiLabel = "(肥満 1度)"; bmiColor = "text-amber-500"; bmiBg = "bg-amber-100"; }
+  else if (bmi >= 30) { bmiLabel = "(肥満 2度以上)"; bmiColor = "text-red-600"; bmiBg = "bg-red-100"; }
+
+  return (
+    <div className="space-y-6 pb-20 md:pb-0">
+      {/* セクション1: 基本プロフィール */}
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow duration-300">
+        <div className="flex items-center gap-2 pb-4 mb-6 border-b border-slate-100 text-lg font-bold text-slate-800">
+          <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><User className="w-5 h-5" /></div>
+          基本プロフィール
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="group">
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">年齢</label>
+            <div className="relative">
+              <select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer hover:bg-slate-100" value={data.age} onChange={(e) => handleChange('age', parseInt(e.target.value))}>
+                {Array.from({ length: 81 }, (_, i) => i + 20).map(age => <option key={age} value={age}>{age} 歳</option>)}
+              </select>
+              <div className="absolute right-3 top-3.5 pointer-events-none text-slate-400">▼</div>
+            </div>
+          </div>
+          <div className="group">
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">性別</label>
+             <div className="flex bg-slate-50 p-1 rounded-xl border border-slate-200">
+                <button onClick={() => handleChange('sex', 'male')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${data.sex === 'male' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>男性</button>
+                <button onClick={() => handleChange('sex', 'female')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${data.sex === 'female' ? 'bg-white text-rose-500 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>女性</button>
+             </div>
+          </div>
+          <div className="group">
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">身長 (cm)</label>
+            <input type="number" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-mono" value={data.height || ''} onChange={(e) => handleChange('height', e.target.value === '' ? 0 : parseFloat(e.target.value))} placeholder="170" />
+          </div>
+          <div className="group">
+            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 group-focus-within:text-blue-600 transition-colors">体重 (kg)</label>
+            <input type="number" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-mono" value={data.weight || ''} onChange={(e) => handleChange('weight', e.target.value === '' ? 0 : parseFloat(e.target.value))} placeholder="65" />
+          </div>
+        </div>
+        
+        {/* BMI Indicator */}
+        <div className="mt-6 flex justify-end">
+           <div className={`inline-flex items-center gap-3 px-4 py-2 rounded-full ${bmiBg} transition-colors`}>
+              <span className="text-xs font-bold text-slate-600 uppercase">BMI</span>
+              <span className="text-xl font-black text-slate-800 font-mono tracking-tighter">{getBMI()}</span>
+              <span className={`text-xs font-bold px-2 py-0.5 bg-white/50 rounded ${bmiColor}`}>{bmiLabel}</span>
+           </div>
+        </div>
+      </div>
+
+      {/* セクション2: 生活習慣 */}
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow duration-300">
+        <div className="flex items-center gap-2 pb-4 mb-6 border-b border-slate-100 text-lg font-bold text-slate-800">
+           <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><Activity className="w-5 h-5" /></div>
+           生活習慣・社会的因子
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+           <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">飲酒習慣</label>
+              <select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500" value={data.alcohol} onChange={(e) => handleChange('alcohol', e.target.value as any)}><option value="none">飲まない</option><option value="moderate">適度 (1日1合程度)</option><option value="heavy">多量 (週450g以上)</option></select>
+           </div>
+           <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">喫煙歴</label>
+              <select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500" value={data.smoking} onChange={(e) => handleChange('smoking', e.target.value as any)}><option value="never">吸わない (生涯非喫煙)</option><option value="past">過去に吸っていた</option><option value="current">吸っている</option></select>
+              
+              {data.smoking === 'current' && (
+                <div className="mt-2 bg-gradient-to-r from-slate-50 to-slate-100 p-4 rounded-xl border border-slate-200 animate-scale-in origin-top">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600"><Cigarette className="w-3.5 h-3.5" /> 1日の喫煙本数</div>
+                    <span className="text-blue-600 font-mono font-bold text-lg">{data.cigarettesPerDay}<span className="text-xs ml-0.5">本</span></span>
+                  </div>
+                  <input type="range" min="1" max="60" className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 hover:accent-blue-500 transition-all" value={data.cigarettesPerDay} onChange={(e) => handleChange('cigarettesPerDay', parseInt(e.target.value))} />
+                  <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-mono"><span>1</span><span>30</span><span>60+</span></div>
+                </div>
+              )}
+           </div>
+           <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700">運動習慣 <span className="text-xs font-normal text-slate-400">(週2回以上)</span></label>
+              <div className="flex gap-2">
+                  {['yes', 'no'].map((opt) => (
+                      <button key={opt} onClick={() => handleChange('exercise', opt as any)} 
+                        className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm border-2 transition-all duration-200 ${data.exercise === opt ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-100 bg-slate-50 text-slate-400 hover:bg-slate-100'}`}>
+                        {opt === 'yes' ? 'あり' : 'なし'}
+                      </button>
+                  ))}
+              </div>
+           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+           <div><TooltipLabel label="睡眠時間" tooltip="平均的な睡眠時間です。6時間未満や9時間以上は健康リスクを高める可能性があります。" /><select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500" value={data.sleep} onChange={(e) => handleChange('sleep', e.target.value as Sleep)}><option value="optimal">6〜8時間 (最適)</option><option value="short">6時間未満 (不足)</option><option value="long">9時間以上 (過多)</option></select></div>
+           <div><TooltipLabel label="社会的つながり" tooltip="家族や友人との交流頻度や、孤独感の有無です。社会的孤立は喫煙と同等のリスクがあるとされています。" /><select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500" value={data.social} onChange={(e) => handleChange('social', e.target.value as Social)}><option value="active">活発 (毎日交流あり)</option><option value="moderate">普通 (週数回程度)</option><option value="isolated">孤立気味 (ほとんどない)</option></select></div>
+           <div><TooltipLabel label="野菜摂取" tooltip="バランスの良い食事の指標です。1日350g以上の野菜摂取が推奨されています。" /><select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500" value={data.diet} onChange={(e) => handleChange('diet', e.target.value as Diet)}><option value="good">十分 (1日350g以上)</option><option value="average">普通</option><option value="poor">不足 (野菜をあまり食べない)</option></select></div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+           <SelectionCard checked={data.fam_cancer} onChange={(c) => handleChange('fam_cancer', c)} label="がん家族歴" subLabel="両親・兄弟姉妹" />
+           <SelectionCard checked={data.parent_long} onChange={(c) => handleChange('parent_long', c)} label="親が長寿" subLabel="90歳以上" />
+           <SelectionCard checked={data.allergy} onChange={(c) => handleChange('allergy', c)} label="アレルギー体質" />
+        </div>
+      </div>
+
+      {/* セクション3: 既往歴 */}
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200/60 hover:shadow-md transition-shadow duration-300">
+        <div className="flex items-center gap-2 pb-4 mb-6 border-b border-slate-100 text-lg font-bold text-slate-800">
+          <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><FileText className="w-5 h-5" /></div>
+          既往歴・感染症・内服
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+           <div><TooltipLabel label="ピロリ菌検査" tooltip="胃がんの最大のリスク要因です。未検査の場合は「不明」を選択してください。" color="text-rose-600"/><select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-rose-500" value={data.pylori} onChange={(e) => handleChange('pylori', e.target.value as Pylori)}><option value="unknown">検査未実施 / 不明</option><option value="negative">陰性 (未感染)</option><option value="eradicated">除菌済み</option><option value="current">陽性 (現感染)</option></select></div>
+           <div><TooltipLabel label="萎縮性胃炎 (胃カメラ)" tooltip="胃粘膜が薄くなる現象で、胃がん発生の母地となります。胃カメラ検査で指摘されたことがありますか？" color="text-rose-600"/><select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-rose-500" value={data.atrophic_gastritis} onChange={(e) => handleChange('atrophic_gastritis', e.target.value as AtrophicGastritis)}><option value="unknown">検査未実施 / 不明</option><option value="yes">あり (要経過観察)</option><option value="no">なし</option></select></div>
+           <div><TooltipLabel label="内服薬 (ポリファーマシー)" tooltip="5種類以上の薬を服用している状態（多剤併用）は、副作用や転倒のリスクを高める可能性があります。" /><select className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500" value={data.polypharmacy} onChange={(e) => handleChange('polypharmacy', e.target.value as Polypharmacy)}><option value="0">なし</option><option value="1-4">1〜4種類</option><option value="5+">5種類以上 (多剤併用)</option></select></div>
+        </div>
+        
+        <label className="block font-bold text-slate-600 mb-3 text-sm flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-slate-400 rounded-full"></span> 既往歴・感染症 <span className="text-xs font-normal text-slate-400 ml-1">(該当する項目をタップ)</span>
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <SelectionCard checked={data.hist_cancer} onChange={(c) => handleChange('hist_cancer', c)} label="がん既往" risk={true} />
+            <SelectionCard checked={data.hist_stroke} onChange={(c) => handleChange('hist_stroke', c)} label="脳卒中" risk={true} />
+            <SelectionCard checked={data.hist_heart} onChange={(c) => handleChange('hist_heart', c)} label="心疾患" risk={true} />
+            <SelectionCard checked={data.dm} onChange={(c) => handleChange('dm', c)} label="糖尿病" risk={true} />
+            <SelectionCard checked={data.htn} onChange={(c) => handleChange('htn', c)} label="高血圧" />
+            <SelectionCard checked={data.dl} onChange={(c) => handleChange('dl', c)} label="高脂血症" />
+            <SelectionCard checked={data.inf_hep} onChange={(c) => handleChange('inf_hep', c)} label="肝炎(B/C)" />
+            <SelectionCard checked={data.inf_hpv} onChange={(c) => handleChange('inf_hpv', c)} label="HPV感染" />
+        </div>
+      </div>
+
+      <button onClick={onAnalyze} className="group relative w-full py-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-lg font-bold rounded-2xl shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-[1.01] transition-all duration-300 overflow-hidden active:scale-[0.99]">
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+        <div className="relative flex items-center justify-center gap-3">
+            <Calculator className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+            <span>健康資産と余命を分析する</span>
+        </div>
+      </button>
+    </div>
+  );
+};
+export default InputForm;
+
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle, TrendingUp, ShieldCheck, ArrowRight } from 'lucide-react';
+
+const OnboardingGuide: React.FC = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [step, setStep] = useState(1);
+  useEffect(() => { const hasSeen = localStorage.getItem('phm_onboarding_seen'); if (!hasSeen) setIsVisible(true); }, []);
+  const handleClose = () => { setIsVisible(false); localStorage.setItem('phm_onboarding_seen', 'true'); };
+  const handleNext = () => { if (step < 3) setStep(step + 1); else handleClose(); };
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden relative">
+        <button onClick={handleClose} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"><X className="w-6 h-6" /></button>
+        <div className="p-8">
+          <div className="flex gap-2 mb-8 justify-center">{[1, 2, 3].map(i => (<div key={i} className={`h-1.5 w-12 rounded-full transition-colors ${i <= step ? 'bg-blue-600' : 'bg-slate-200'}`} />))}</div>
+          <div className="min-h-[200px] text-center">
+            {step === 1 && (<div className="animate-fade-in"><div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600"><TrendingUp className="w-8 h-8" /></div><h2 className="text-2xl font-bold text-slate-800 mb-3">ミライ査定へようこそ！</h2><p className="text-slate-600 leading-relaxed">ここは単なる健康計算機ではありません。<br/>あなたの<strong>「余命」</strong>と<strong>「健康資産(お金)」</strong>を可視化し、<br/>明日からの行動を変えるためのSaaSプラットフォームです。</p></div>)}
+            {step === 2 && (<div className="animate-fade-in"><div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600"><ShieldCheck className="w-8 h-8" /></div><h2 className="text-2xl font-bold text-slate-800 mb-3">科学的根拠に基づく分析</h2><p className="text-slate-600 leading-relaxed">厚労省の統計データと最新の医学論文に基づき、<br/>あなたの生活習慣が<strong>「寿命を何年縮めているか」</strong><br/>または<strong>「何年延ばしているか」</strong>を精密に算出します。</p></div>)}
+            {step === 3 && (<div className="animate-fade-in"><div className="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-600"><CheckCircle className="w-8 h-8" /></div><h2 className="text-2xl font-bold text-slate-800 mb-3">使い方は簡単です</h2><p className="text-slate-600 leading-relaxed">1. プロフィールと生活習慣を入力してください。<br/>2. AIがリスクと経済的損失を分析します。<br/>3. 結果を保存して、定期的に改善度をチェックしましょう。</p></div>)}
+          </div>
+          <div className="mt-8 flex justify-center"><button onClick={handleNext} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg flex items-center gap-2 transition-transform active:scale-95">{step === 3 ? "はじめる" : "次へ"} <ArrowRight className="w-4 h-4" /></button></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export default OnboardingGuide;
+
+import React from 'react';
+import { StomachCancerResult } from '../types';
+import { Activity } from 'lucide-react';
+
+interface Props { result: StomachCancerResult; }
+
+const StomachCancerRisk: React.FC<Props> = ({ result }) => {
+  if (result.level === 'unknown') return (<div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6"><div className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><Activity className="w-5 h-5 text-blue-600" /> 胃がんリスク評価</div><p className="text-slate-600">{result.advice}</p></div>);
+  const isHigh = result.level === 'high';
+  const isMedium = result.level === 'medium';
+  const label = isHigh ? '高リスク' : isMedium ? '中リスク' : '低リスク';
+  const scoreColor = isHigh ? 'text-red-600' : isMedium ? 'text-amber-600' : 'text-emerald-600';
+  const badgeBg = isHigh ? 'bg-red-100 text-red-800' : isMedium ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800';
+  const maxAbsValue = Math.max(...result.contributions.map(c => Math.abs(c.value)), 1);
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-100 pb-3"><Activity className="w-5 h-5 text-blue-600" /> 胃がんリスク評価 (XAI)</div>
+      <div className="flex flex-col md:flex-row gap-8">
+         <div className="md:w-1/2 text-center bg-slate-50 p-6 rounded-lg border border-slate-200">
+            <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold mb-2 ${badgeBg}`}>{label}</span>
+            <div className="text-sm text-slate-500 font-bold">リスクスコア</div>
+            <div className={`text-5xl font-black ${scoreColor}`}>{result.score}<span className="text-lg text-slate-400">/99</span></div>
+            <div className="mt-4 text-left text-sm text-slate-600 bg-white p-3 rounded border border-slate-200">{result.advice}</div>
+         </div>
+         <div className="md:w-1/2">
+            <h4 className="font-bold text-slate-700 text-sm mb-3">リスク要因の寄与度 (SHAP値)</h4>
+            <div className="space-y-2">
+               {result.contributions.map((c, i) => {
+                  const widthPct = (Math.abs(c.value) / maxAbsValue) * 100;
+                  const isRisk = c.value > 0;
+                  const barColor = isRisk ? 'bg-red-400' : 'bg-emerald-400';
+                  return (
+                     <div key={i} className="flex items-center text-sm gap-2">
+                        <div className="w-24 text-right font-bold text-slate-600">{c.label}</div>
+                        <div className="flex-1 bg-slate-100 h-4 rounded overflow-hidden"><div className={`h-full ${barColor}`} style={{ width: `${widthPct}%` }}></div></div>
+                        <div className={`w-10 text-right font-mono text-xs ${isRisk ? 'text-red-600' : 'text-emerald-600'}`}>{isRisk ? '+' : ''}{c.value.toFixed(1)}</div>
+                     </div>
+                  );
+               })}
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+};
+export default StomachCancerRisk;
+
+import React, { useState } from 'react';
+import { Thermometer, ShieldCheck, AlertCircle } from 'lucide-react';
+
+const SymptomChecker: React.FC = () => {
+  const [activeSymptoms, setActiveSymptoms] = useState<string[]>([]);
+  const toggleSymptom = (id: string) => { setActiveSymptoms(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]); };
+  const symptoms = [{ id: 'fever', label: '発熱・感冒' }, { id: 'pain', label: '疼痛 (腰・背中)' }, { id: 'stomach', label: '消化器 (嘔吐/下痢)' }, { id: 'injury', label: '外傷 (ケガ)' }];
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div className="flex items-center gap-2 pb-4 mb-4 border-b border-slate-100 text-lg font-bold text-slate-800"><Thermometer className="w-5 h-5 text-blue-600" /> 気になる症状・セルフケアガイド</div>
+        <p className="text-slate-500 text-sm mb-4">現在気になる症状があればチェックしてください。</p>
+        <div className="grid grid-cols-2 gap-3 mb-6">{symptoms.map(s => (<label key={s.id} className="flex items-center p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"><input type="checkbox" className="w-5 h-5 mr-3" checked={activeSymptoms.includes(s.id)} onChange={() => toggleSymptom(s.id)} /><span className="font-bold text-slate-700">{s.label}</span></label>))}</div>
+        <div className="space-y-4">
+          {activeSymptoms.includes('fever') && (<SymptomCard title="🤒 発熱・感冒" safeDesc="軽度で短期間の発熱、全身倦怠感、鼻水。水分(ORS)摂取で脱水予防が可能な場合。" safeAction="総合感冒薬による緩和、十分な睡眠と水分補給。" redDesc={["38℃以上の発熱が4日以上持続", "強い頭痛、項部硬直(首が固い・髄膜炎疑い)", "けいれん、意識障害、呼吸困難"]} />)}
+          {activeSymptoms.includes('pain') && (<SymptomCard title="⚡ 疼痛 (腰痛・背部痛)" safeDesc="軽度から中等度の筋肉痛、姿勢変化に伴う痛み。" safeAction="安静にしすぎず動ける範囲で動かす。湿布やNSAIDs(痛み止め)の使用。" redDesc={["急性の引き裂かれるような背部痛 (大動脈解離の可能性)", "原因不明の体重減少、排尿・排便障害(馬尾神経圧迫)", "安静にしていても痛む重度の夜間痛"]} />)}
+          {activeSymptoms.includes('stomach') && (<SymptomCard title="🤢 消化器症状 (嘔吐/下痢)" safeDesc="軽度な下痢・嘔吐、経口補水が可能な場合。" safeAction="絶食せず消化の良いものを少量ずつ。脱水予防(ORS)が最優先。" redDesc={["激しい腹痛の持続", "血便・吐血 (タール便含む)", "強い脱水症状 (意識レベル低下、尿量減少)"]} />)}
+          {activeSymptoms.includes('injury') && (<SymptomCard title="🩹 外傷" safeDesc="軽微な擦過傷、表皮に留まる切り傷、異物が完全に除去できた場合。" safeAction="水道水でよく洗浄し、湿潤療法(キズパワーパッド等)で保護。消毒は控える。" redDesc={["圧迫しても止血困難", "砂や異物が完全に除去できない (感染・刺青リスク)", "広範囲の熱傷、関節が動かせない"]} />)}
+        </div>
+      </div>
+    </div>
+  );
+};
+const SymptomCard = ({ title, safeDesc, safeAction, redDesc }: any) => (
+  <div className="border border-slate-300 rounded-lg overflow-hidden">
+     <div className="bg-slate-100 p-3 font-bold text-slate-800 border-b border-slate-200">{title}</div>
+     <div className="p-4 bg-white">
+        <div className="mb-4 bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded-r"><div className="font-bold text-emerald-700 flex items-center gap-2 mb-1"><ShieldCheck className="w-4 h-4"/> セルフケア適用</div><p className="text-sm text-slate-700 mb-1">{safeDesc}</p><div className="text-sm font-bold text-emerald-700">対処: {safeAction}</div></div>
+        <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-r"><div className="font-bold text-red-700 flex items-center gap-2 mb-1"><AlertCircle className="w-4 h-4"/> 受診推奨 (Red Flag)</div><ul className="text-sm text-red-800 list-disc list-inside">{redDesc.map((d: string, i: number) => <li key={i}>{d}</li>)}</ul></div>
+     </div>
+  </div>
+);
+export default SymptomChecker;
+
+
+
+import { UserData, SimulationResult, EconomicValue } from '../types';
+import { CONST_EX_MALE, CONST_EX_FEMALE, CONST_QX_MALE, CONST_QX_FEMALE, ANNUAL_HOURS, RETIREMENT_AGE, WAGE_STATS } from '../constants';
+import { calculateStomachRisk } from './stomachCancerEngine';
+
+interface Factor { label: string; hr: number; }
+
+const simulate = (startAge: number, sex: 'male' | 'female', hr: number) => {
+    const qx_data = (sex === 'male') ? CONST_QX_MALE : CONST_QX_FEMALE;
+    let lx = 1.0;
+    let le = 0.0;
+    const curve: number[] = [];
+    const safeStartAge = Math.min(startAge, qx_data.length - 1);
+
+    for (let t = safeStartAge; t < 115; t++) {
+        let q_base = (t < qx_data.length) ? qx_data[t] : 1.0;
+        let q_adj = 1 - Math.pow((1 - q_base), hr);
+        if (q_adj > 1.0) q_adj = 1.0;
+        const lx_next = lx * (1 - q_adj);
+        le += (lx + lx_next) / 2.0;
+        curve.push(lx);
+        lx = lx_next;
+        if (lx < 0.0001) break;
+    }
+    return { le, curve };
+};
+
+const calculateExpectedEarnings = (age: number, curve: number[]): EconomicValue => {
+    let sumMean = 0;
+    let sumMin = 0;
+    let sumMax = 0;
+    const yearsToWork = Math.max(0, RETIREMENT_AGE - age);
+    
+    for (let i = 0; i < yearsToWork; i++) {
+        const probAlive = curve[i] || 0;
+        const workHours = ANNUAL_HOURS;
+        sumMean += probAlive * WAGE_STATS.MEAN * workHours;
+        sumMin += probAlive * WAGE_STATS.LOWER * workHours;
+        sumMax += probAlive * WAGE_STATS.UPPER * workHours;
+    }
+    return { value: sumMean, min: sumMin, max: sumMax };
+};
+
+export const runHealthAnalysis = (data: UserData): SimulationResult => {
+    const { age, sex, height, weight } = data;
+    const ex_table = (sex === 'male') ? CONST_EX_MALE : CONST_EX_FEMALE;
+    const official_ex = (age < ex_table.length) ? ex_table[age] : 0;
+
+    let factors: Factor[] = [];
+    let hr_total = 1.0;
+
+    // --- Evidence-Based HR Parameters Update (2025/12/04) ---
+    // Based on JPHC, JACC, and other Japanese cohort studies.
+
+    if (height > 0 && weight > 0) {
+        const bmi = weight / Math.pow(height / 100, 2);
+        if (bmi < 18.5) {
+            // エンジニアリング・ノートに基づく実装:
+            // 高齢者（>75歳）の場合、予備能欠如（フレイル）により感染症等の侵襲に対する抵抗力が下がるため、
+            // 低体重のリスクを HR 1.6 -> 1.8 へ動的にブーストする。
+            const isElderly = age >= 75;
+            const hr = isElderly ? 1.8 : 1.6;
+            const label = isElderly ? "低体重(フレイル)" : "低体重";
+            factors.push({ label, hr });
+        }
+        else if (bmi >= 30) factors.push({ label: "肥満(重)", hr: 1.35 }); // Updated from 1.3
+        else if (bmi >= 25) factors.push({ label: "肥満(軽)", hr: 1.1 }); // Validated
+    }
+
+    // Alcohol
+    if (data.alcohol === 'moderate') factors.push({ label: "適度飲酒(Bonus)", hr: 0.9 });
+    else if (data.alcohol === 'heavy') factors.push({ label: "多量飲酒", hr: 1.55 }); // Updated from 1.4 (J-curve ends)
+
+    // Smoking (Updated with Count-based HR)
+    if (data.smoking === 'never') factors.push({ label: "非喫煙(Bonus)", hr: 0.85 });
+    else if (data.smoking === 'past') factors.push({ label: "過去喫煙", hr: 1.35 });
+    else {
+        // 現在喫煙: 本数によるリスク層別化
+        const count = data.cigarettesPerDay || 20;
+        let smokeHr = 1.7; // Default average
+        let label = `現在喫煙(${count}本)`;
+        
+        if (count < 10) {
+            smokeHr = 1.3;
+            label = `現在喫煙(軽/${count}本)`;
+        } else if (count >= 20) {
+            smokeHr = 2.2;
+            label = `現在喫煙(重/${count}本)`;
+        }
+        factors.push({ label, hr: smokeHr });
+    }
+
+    // Exercise
+    if (data.exercise === 'yes') factors.push({ label: "運動習慣(Bonus)", hr: 0.85 });
+    else factors.push({ label: "運動不足", hr: 1.2 }); // Updated from 1.1
+
+    // Sleep
+    if (data.sleep === 'short') factors.push({ label: "睡眠不足(<6h)", hr: 1.12 }); // Validated
+    else if (data.sleep === 'long') factors.push({ label: "過眠(>9h)", hr: 1.25 }); // Validated
+
+    // Social
+    if (data.social === 'isolated') factors.push({ label: "社会的孤立", hr: 1.3 }); // Updated from 1.29
+    else if (data.social === 'active') factors.push({ label: "活発な交流(Bonus)", hr: 0.95 });
+
+    // Diet
+    if (data.diet === 'poor') factors.push({ label: "野菜不足", hr: 1.15 }); // Updated from 1.1
+    else if (data.diet === 'good') factors.push({ label: "食生活良好(Bonus)", hr: 0.95 });
+
+    // Meds
+    if (data.polypharmacy === '1-4') factors.push({ label: "内服薬あり", hr: 1.1 });
+    else if (data.polypharmacy === '5+') factors.push({ label: "多剤併用", hr: 1.3 }); // Validated
+
+    // Pylori (Major Update: All-cause mortality risk is low compared to stomach cancer risk)
+    if (data.pylori === 'negative') factors.push({ label: "ピロリ未感染(Bonus)", hr: 0.98 });
+    else if (data.pylori === 'current') factors.push({ label: "ピロリ現感染", hr: 1.05 }); // Updated from 1.28
+    else if (data.pylori === 'eradicated') factors.push({ label: "ピロリ除菌済", hr: 1.0 }); // Neutral
+
+    // Medical History
+    if (data.fam_cancer) factors.push({ label: "がん家族歴", hr: 1.1 });
+    if (data.parent_long) factors.push({ label: "親が長寿(Bonus)", hr: 0.85 });
+    if (data.allergy) factors.push({ label: "アレルギー体質", hr: 1.0 }); // Neutral
+
+    if (data.hist_cancer) factors.push({ label: "がん既往", hr: 1.4 }); // Validated
+    if (data.hist_stroke) factors.push({ label: "脳卒中既往", hr: 2.0 }); // Validated
+    if (data.hist_heart) factors.push({ label: "心疾患既往", hr: 1.8 }); // Validated
+
+    if (data.dm) factors.push({ label: "糖尿病", hr: 1.75 }); // Updated from 1.3 (Critical update)
+    if (data.htn) factors.push({ label: "高血圧", hr: 1.2 }); // Validated
+    if (data.dl) factors.push({ label: "高脂血症", hr: 1.1 });
+    if (data.inf_hep) factors.push({ label: "肝炎ウイルス", hr: 1.2 });
+    if (data.inf_hpv) factors.push({ label: "HPV", hr: 1.05 });
+
+    factors.forEach(f => hr_total *= f.hr);
+
+    // --- Dampening & Cap Logic ---
+    // If HR > 1.0, apply dampening to prevent unrealistic compounding (stacking) of risks
+    if (hr_total > 1.0) {
+        hr_total = 1.0 + (hr_total - 1.0) * 0.8;
+    }
+
+    // Safety caps
+    hr_total = Math.min(hr_total, 2.8); // Slightly increased cap due to higher base HRs (e.g. Stroke + Diabetes)
+    hr_total = Math.max(hr_total, 0.4);
+
+    const sim_base = simulate(age, sex, 1.0);
+    const bias = official_ex - sim_base.le;
+    const sim_user = simulate(age, sex, hr_total);
+    const final_le = Math.max(0.1, sim_user.le + bias);
+    const diff = final_le - official_ex;
+
+    let median_age = age + final_le;
+    if (sim_user.curve && sim_user.curve.length > 0) {
+        for (let i = 0; i < sim_user.curve.length; i++) {
+            if (sim_user.curve[i] <= 0.5) {
+                const prev = i > 0 ? sim_user.curve[i - 1] : 1.0;
+                const curr = sim_user.curve[i];
+                const frac = (prev - 0.5) / (prev - curr);
+                median_age = (age + i - 1) + frac;
+                break;
+            }
+        }
+    }
+
+    let hr_ideal = 1.0;
+    const immutable_factors = ['がん家族歴', '親が長寿(Bonus)', 'がん既往', '脳卒中既往', '心疾患既往', '糖尿病', '高血圧', '高脂血症', 'アレルギー体質'];
+    factors.forEach(f => {
+        if (immutable_factors.includes(f.label)) hr_ideal *= f.hr;
+        else if (f.label.includes("Bonus")) hr_ideal *= f.hr;
+    });
+
+    // Calculate potential gain by removing modifiable risks
+    if (data.smoking !== 'never') hr_ideal *= 0.85; 
+    if (data.exercise !== 'yes') hr_ideal *= 0.85; 
+    if (data.alcohol === 'heavy') hr_ideal *= 0.9;
+    if (data.sleep !== 'optimal') hr_ideal *= 0.95; 
+    if (data.diet === 'poor') hr_ideal *= 0.95; 
+    if (data.social === 'isolated') hr_ideal *= 0.9; 
+    
+    if (hr_ideal > 1.0) hr_ideal = 1.0 + (hr_ideal - 1.0) * 0.8;
+    hr_ideal = Math.min(hr_ideal, 2.5);
+    hr_ideal = Math.max(hr_ideal, 0.4);
+
+    const sim_ideal = simulate(age, sex, hr_ideal);
+    const earningsCurrent = calculateExpectedEarnings(age, sim_user.curve);
+    const earningsAvg = calculateExpectedEarnings(age, sim_base.curve);
+    const earningsIdeal = calculateExpectedEarnings(age, sim_ideal.curve);
+
+    const currentLoss = {
+        value: Math.max(0, earningsAvg.value - earningsCurrent.value),
+        min: Math.max(0, earningsAvg.min - earningsCurrent.min),
+        max: Math.max(0, earningsAvg.max - earningsCurrent.max)
+    };
+    const potentialGain = {
+        value: Math.max(0, earningsIdeal.value - earningsCurrent.value),
+        min: Math.max(0, earningsIdeal.min - earningsCurrent.min),
+        max: Math.max(0, earningsIdeal.max - earningsCurrent.max)
+    };
+
+    const chartData = sim_user.curve.map((prob, i) => ({
+        age: age + i,
+        survival: prob,
+        avgSurvival: sim_base.curve[i] || 0
+    })).filter((_, i) => (age + i) <= 105);
+
+    const factorImpacts = factors.map(f => {
+        const sim_f = simulate(age, sex, f.hr);
+        return { label: f.label, hr: f.hr, impact: (sim_f.le + bias) - official_ex };
+    }).sort((a, b) => b.impact - a.impact);
+
+    const stomachRisk = calculateStomachRisk(data);
+
+    return {
+        le: parseFloat(final_le.toFixed(2)),
+        lifespan: parseFloat((age + final_le).toFixed(1)),
+        median: parseFloat(median_age.toFixed(1)),
+        diff: parseFloat(diff.toFixed(2)),
+        official: parseFloat(official_ex.toFixed(2)),
+        curve: chartData,
+        economic: { currentLoss, potentialGain, workYearsAvg: 0, workYearsCurrent: 0 },
+        factors: factorImpacts,
+        stomachRisk
+    };
+};
+
+import { UserData, StomachCancerResult } from '../types';
+
+const COEFFICIENTS = {
+    intercept: -7.5,
+    birth_year_cat: { 1990: 0, 1980: 0.2, 1970: 0.5, 1960: 0.9, 1950: 1.4, 1940: 2.0 },
+    sex_M: 0.6,
+    pylori_infected: 2.5,
+    pylori_eradicated: 0.8,
+    atrophy_yes: 1.5,
+    family_history_yes: 0.5,
+    diabetes_yes: 0.2,
+    smoking_current: 0.8,
+    smoking_past: 0.3,
+    drinking_heavy: 0.6,
+    drinking_moderate: 0.2,
+};
+
+const THRESHOLDS = { medium: 0.565, high: 0.660 };
+
+export const calculateStomachRisk = (data: UserData): StomachCancerResult => {
+    const currentYear = new Date().getFullYear();
+    const birthYear = currentYear - data.age;
+    let birthDecadeKey: keyof typeof COEFFICIENTS.birth_year_cat = 1990;
+    if (birthYear >= 1990) birthDecadeKey = 1990;
+    else if (birthYear >= 1980) birthDecadeKey = 1980;
+    else if (birthYear >= 1970) birthDecadeKey = 1970;
+    else if (birthYear >= 1960) birthDecadeKey = 1960;
+    else if (birthYear >= 1950) birthDecadeKey = 1950;
+    else birthDecadeKey = 1940;
+
+    if (data.pylori === 'unknown' || data.atrophic_gastritis === 'unknown') {
+        return {
+            score: 0,
+            level: 'unknown',
+            advice: '正確なリスクを判定するには、ピロリ菌検査と萎縮性胃炎(胃カメラ等)の情報が重要です。まずはかかりつけ医にご相談ください。',
+            contributions: []
+        };
+    }
+
+    let logit = COEFFICIENTS.intercept;
+    const contributions = [];
+
+    const birthVal = COEFFICIENTS.birth_year_cat[birthDecadeKey];
+    logit += birthVal;
+    contributions.push({ label: '年代', value: birthVal });
+
+    const sexVal = data.sex === 'male' ? COEFFICIENTS.sex_M : 0;
+    logit += sexVal;
+    contributions.push({ label: '性別', value: sexVal });
+
+    let pyloriVal = 0;
+    if (data.pylori === 'current') pyloriVal = COEFFICIENTS.pylori_infected;
+    else if (data.pylori === 'eradicated') pyloriVal = COEFFICIENTS.pylori_eradicated;
+    logit += pyloriVal;
+    contributions.push({ label: 'ピロリ菌', value: pyloriVal });
+
+    const atrophyVal = data.atrophic_gastritis === 'yes' ? COEFFICIENTS.atrophy_yes : 0;
+    logit += atrophyVal;
+    contributions.push({ label: '萎縮性胃炎', value: atrophyVal });
+
+    const famVal = data.fam_cancer ? COEFFICIENTS.family_history_yes : 0;
+    logit += famVal;
+    contributions.push({ label: '家族歴', value: famVal });
+
+    const dmVal = data.dm ? COEFFICIENTS.diabetes_yes : 0;
+    logit += dmVal;
+    contributions.push({ label: '糖尿病', value: dmVal });
+
+    let smokeVal = 0;
+    if (data.smoking === 'current') smokeVal = COEFFICIENTS.smoking_current;
+    else if (data.smoking === 'past') smokeVal = COEFFICIENTS.smoking_past;
+    logit += smokeVal;
+    contributions.push({ label: '喫煙', value: smokeVal });
+
+    let drinkVal = 0;
+    if (data.alcohol === 'heavy') drinkVal = COEFFICIENTS.drinking_heavy;
+    else if (data.alcohol === 'moderate') drinkVal = COEFFICIENTS.drinking_moderate;
+    logit += drinkVal;
+    contributions.push({ label: '飲酒', value: drinkVal });
+
+    const rawProb = 1 / (1 + Math.exp(-logit));
+    const normalizedScore = Math.round(rawProb * 98) + 1;
+
+    let level: StomachCancerResult['level'] = 'low';
+    let advice = '';
+
+    if (rawProb < THRESHOLDS.medium) {
+        level = 'low';
+        advice = '現在のところリスクは低いと考えられます。健康的な生活習慣を維持し、お住まいの自治体が推奨する胃がん検診（50歳以上が対象）を定期的に受診しましょう。';
+    } else if (rawProb < THRESHOLDS.high) {
+        level = 'medium';
+        advice = 'いくつかのがんリスクが認められます。定期的な胃の検査（胃カメラなど）について、かかりつけ医にご相談ください。生活習慣の見直しも推奨されます。';
+    } else {
+        level = 'high';
+        advice = '胃がんのリスクが比較的高い状態と考えられます。症状がなくても、毎年の内視鏡検査による経過観察が推奨されます。速やかに消化器内科の専門医を受診し、今後の検査計画について詳しく相談してください。';
+    }
+
+    const sortedContributions = contributions
+        .filter(c => c.value !== 0)
+        .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+        .map(c => ({
+            label: c.label,
+            value: c.value,
+            isPositive: c.value > 0
+        }));
+
+    return { score: normalizedScore, level, advice, contributions: sortedContributions };
+};
+
+
