@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { UserData, Sleep, Social, Diet, Pylori, AtrophicGastritis, Polypharmacy } from '../types';
-import { User, Activity, FileText, Calculator, HelpCircle, Cigarette, Check } from 'lucide-react';
+import { User, Activity, FileText, Calculator, HelpCircle, Cigarette, Check, BrainCircuit } from 'lucide-react';
 
 interface Props {
     data: UserData;
@@ -154,6 +154,61 @@ const InputForm: React.FC<Props> = ({ data, onChange, onAnalyze }) => {
                     <SelectionCard checked={data.dl} onChange={(c) => handleChange('dl', c)} label="高脂血症" />
                     <SelectionCard checked={data.inf_hep} onChange={(c) => handleChange('inf_hep', c)} label="肝炎(B/C)" />
                     <SelectionCard checked={data.inf_hpv} onChange={(c) => handleChange('inf_hpv', c)} label="HPV感染" />
+                </div>
+            </div>
+
+            {/* AIディープ・フェノタイピング (新規追加) */}
+            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-2xl shadow-inner border border-indigo-100 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none"><BrainCircuit className="w-24 h-24 text-indigo-900" /></div>
+
+                <div className="flex items-center gap-2 pb-4 mb-4 border-b border-indigo-200/50 text-lg font-bold text-indigo-900 relative z-10">
+                    <div className="p-2 bg-indigo-600 text-white rounded-lg shadow-md hover:scale-105 transition-transform"><BrainCircuit className="w-5 h-5" /></div>
+                    AIディープ・問診 (未病サイン分析)
+                </div>
+
+                <p className="text-sm text-indigo-800/80 mb-6 font-medium relative z-10">最新のAI技術に基づき、微細な自覚症状や生活習慣から胃・消化器の隠れたリスク(前がん病変)を推測します。最近1ヶ月程度で気になる症状を選択してください。</p>
+
+                <div className="space-y-6 relative z-10">
+                    <div>
+                        <label className="block font-bold text-rose-800 mb-3 text-sm flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span> 要注意の症状 (Red Flags)
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <SelectionCard checked={data.sys_black_stool} onChange={(c) => handleChange('sys_black_stool', c)} label="黒色便 (タール便)" subLabel="海苔の佃煮のような黒い便" risk />
+                            <SelectionCard checked={data.sys_nausea} onChange={(c) => handleChange('sys_nausea', c)} label="吐き気・嘔吐" subLabel="原因不明の継続する吐き気" risk />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block font-bold text-indigo-800 mb-3 text-sm flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span> 消化器の違和感
+                        </label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <SelectionCard checked={data.sys_distending_pain} onChange={(c) => handleChange('sys_distending_pain', c)} label="お腹が張って痛い" subLabel="膨満痛" />
+                            <SelectionCard checked={data.sys_belching} onChange={(c) => handleChange('sys_belching', c)} label="よくげっぷが出る" subLabel="食事と関係なく続く" />
+                            <SelectionCard checked={data.sys_abd_distention} onChange={(c) => handleChange('sys_abd_distention', c)} label="お腹が張る (膨満感)" />
+                            <SelectionCard checked={data.sys_hypo_pain} onChange={(c) => handleChange('sys_hypo_pain', c)} label="みぞおちの痛み" subLabel="季肋部痛" />
+                            <SelectionCard checked={data.sys_water_brash} onChange={(c) => handleChange('sys_water_brash', c)} label="酸っぱい水が上がる" subLabel="呑酸" />
+                        </div>
+                    </div>
+
+                    <div className="p-4 bg-white/60 rounded-xl border border-indigo-100/50">
+                        <label className="block font-bold text-teal-800 mb-3 text-sm flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span> 東洋医学的・ライフスタイル所見
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <SelectionCard checked={data.life_cold_limbs} onChange={(c) => handleChange('life_cold_limbs', c)} label="手足が冷えやすい (四肢の冷え)" />
+                            <SelectionCard checked={data.life_bitter_taste} onChange={(c) => handleChange('life_bitter_taste', c)} label="口の中に苦みを感じる" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-teal-700 mb-2">普段の食事の温度の好み</label>
+                            <div className="flex bg-white/80 p-1 rounded-xl border border-indigo-200">
+                                <button onClick={() => handleChange('life_temp_pref', 'very_hot')} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${data.life_temp_pref === 'very_hot' ? 'bg-orange-500 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'}`}>🔥 非常に熱い</button>
+                                <button onClick={() => handleChange('life_temp_pref', 'normal')} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${data.life_temp_pref === 'normal' ? 'bg-teal-500 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'}`}>普通</button>
+                                <button onClick={() => handleChange('life_temp_pref', 'cold')} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${data.life_temp_pref === 'cold' ? 'bg-blue-400 text-white shadow-md' : 'text-slate-500 hover:bg-slate-50'}`}>❄️ 冷たい</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

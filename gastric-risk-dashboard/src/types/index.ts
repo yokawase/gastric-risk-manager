@@ -8,6 +8,7 @@ export type AtrophicGastritis = 'unknown' | 'yes' | 'no';
 export type Sleep = 'optimal' | 'short' | 'long';
 export type Social = 'active' | 'moderate' | 'isolated';
 export type Diet = 'good' | 'average' | 'poor';
+export type TempPref = 'very_hot' | 'normal' | 'cold';
 
 export interface UserData {
     age: number;
@@ -35,6 +36,22 @@ export interface UserData {
     dl: boolean;
     inf_hep: boolean;
     inf_hpv: boolean;
+
+    // AI Deep Phenotyping (Red Flags)
+    sys_black_stool: boolean;
+    sys_nausea: boolean;
+
+    // AI Deep Phenotyping (Digestive)
+    sys_distending_pain: boolean;
+    sys_belching: boolean;
+    sys_hypo_pain: boolean;
+    sys_water_brash: boolean;
+    sys_abd_distention: boolean;
+
+    // AI Deep Phenotyping (TCM / Lifestyle)
+    life_temp_pref: TempPref;
+    life_cold_limbs: boolean;
+    life_bitter_taste: boolean;
 }
 
 export interface StomachCancerResult {

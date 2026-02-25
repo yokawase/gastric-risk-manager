@@ -39,11 +39,11 @@ const StomachCancerRisk: React.FC<Props> = ({ result }) => {
                             const isRisk = c.value > 0;
                             return (
                                 <div key={i} className="flex items-center text-sm gap-2">
-                                    <div className="w-24 text-right font-bold text-slate-600">{c.label}</div>
-                                    <div className="flex-1 bg-slate-100 h-4 rounded overflow-hidden">
-                                        <div className={`h-full ${isRisk ? 'bg-red-400' : 'bg-emerald-400'}`} style={{ width: `${widthPct}%` }}></div>
+                                    <div className="w-28 text-right font-bold text-slate-700 truncate" title={c.label}>{c.label}</div>
+                                    <div className="flex-1 bg-slate-100 h-5 rounded-md overflow-hidden shadow-inner">
+                                        <div className={`h-full transition-all duration-1000 ${isRisk ? 'bg-gradient-to-r from-red-400 to-red-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500'}`} style={{ width: `${widthPct}%` }}></div>
                                     </div>
-                                    <div className={`w-10 text-right font-mono text-xs ${isRisk ? 'text-red-600' : 'text-emerald-600'}`}>
+                                    <div className={`w-12 text-right font-mono text-xs font-bold ${isRisk ? 'text-red-600' : 'text-emerald-600'}`}>
                                         {isRisk ? '+' : ''}{c.value.toFixed(1)}
                                     </div>
                                 </div>
