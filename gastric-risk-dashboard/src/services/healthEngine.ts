@@ -12,7 +12,7 @@ const simulate = (startAge: number, sex: 'male' | 'female', hr: number) => {
     const safeStartAge = Math.min(startAge, qx_data.length - 1);
 
     for (let t = safeStartAge; t < 115; t++) {
-        let q_base = t < qx_data.length ? qx_data[t] : 1.0;
+        const q_base = t < qx_data.length ? qx_data[t] : 1.0;
         let q_adj = 1 - Math.pow(1 - q_base, hr);
         if (q_adj > 1.0) q_adj = 1.0;
         const lx_next = lx * (1 - q_adj);

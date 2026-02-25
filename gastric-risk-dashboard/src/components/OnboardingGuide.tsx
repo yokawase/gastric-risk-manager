@@ -7,7 +7,9 @@ const OnboardingGuide: React.FC = () => {
     const [step, setStep] = useState(1);
     useEffect(() => {
         const hasSeen = localStorage.getItem('phm_onboarding_seen');
-        if (!hasSeen) setIsVisible(true);
+        if (!hasSeen) {
+            setTimeout(() => setIsVisible(true), 0);
+        }
     }, []);
     const handleClose = () => { setIsVisible(false); localStorage.setItem('phm_onboarding_seen', 'true'); };
     const handleNext = () => { if (step < 3) setStep(step + 1); else handleClose(); };
