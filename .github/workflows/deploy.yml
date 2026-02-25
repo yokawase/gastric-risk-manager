@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main", "precision-health-googleaistudio"]
+    branches: ["main", "precision-health-googleaistudio", "gastric-risk-manager"]
   workflow_dispatch:
 
 permissions:
