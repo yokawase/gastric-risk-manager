@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from 'react';
 import {
-    BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer
+    BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import {
     Activity, Users, Microscope, AlertTriangle, BrainCircuit, LineChart as ChartIcon,
-    MessageSquare, ChevronRight, ShieldCheck, Thermometer, Coffee, ArrowRight, Database
+    MessageSquare, ShieldCheck, ArrowRight, Database
 } from 'lucide-react';
 
 // モックデータ: マクロ分析（コストと発見率の比較）
